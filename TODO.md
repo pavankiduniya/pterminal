@@ -109,11 +109,12 @@
 | 96 | Plugin / extension system | ❌ | ❌ | ✅ (Python) | ❌ | ❌ | Low | Planned |
 | 97 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
 | 98 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 99 | Notification badge on tab | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
+| 99 | Emoji picker in terminal | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
+| 100 | Notification badge on tab | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
 
 ## Summary
 
-| Terminal | Done (of 100) | Unique Features |
+| Terminal | Done (of 101) | Unique Features |
 |----------|--------------|-----------------|
 | **PTerminal** | **58** | SSH nested folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
 | Terminal.app | 38 | Built into macOS |
