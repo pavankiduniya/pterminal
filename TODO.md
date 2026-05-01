@@ -24,7 +24,7 @@
 | 18 | New window (Cmd+N) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 19 | Close tab (Cmd+W) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 20 | Rename tab | ✅ | ❌ | ✅ | ✅ | ❌ | — | Done |
-| 21 | Split panes | ❌ | ❌ | ✅ | ✅ | ✅ | High | Planned |
+| 21 | Split panes | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
 | | **APPEARANCE** | | | | | | | |
 | 22 | Color themes (13 built-in) | ✅ | ✅ (10) | ✅ (many) | ✅ | ✅ | — | Done |
 | 23 | Environment themes (Dev/Stage/Prod) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
@@ -63,7 +63,7 @@
 | 52 | App icon | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 53 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | | **PLANNED — NOT YET BUILT** | | | | | | | |
-| 54 | Split panes (Cmd+D) | ❌ | ❌ | ✅ | ✅ | ✅ | High | Planned |
+| 54 | ~~Split panes (Cmd+D)~~ | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
 | 55 | Settings/preferences window | ❌ | ✅ | ✅ | ✅ | ✅ | High | Planned |
 | 56 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
 | 57 | Autocomplete from history | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |

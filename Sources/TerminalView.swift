@@ -242,16 +242,10 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         guard BroadcastManager.shared.isActive else { return }
         guard let text = broadcastInput?.stringValue, !text.isEmpty else { return }
 
-        // Send to ALL terminal tabs
-        let allWindows = NSApp.windows
-        for window in allWindows {
-            if let view = window.contentView as? PTerminalView {
-                view.terminalView.send(txt: text + "\n")
-            }
-        }
+        // Send to ALL terminal panes across all windows and splits
+        BroadcastManager.shared.broadcastToAll(text: text + "\n")
 
         broadcastInput?.stringValue = ""
-        // Keep focus on input for next command
         window?.makeFirstResponder(broadcastInput)
     }
 

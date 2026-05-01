@@ -35,14 +35,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.tabbingMode = .preferred
         window.tabbingIdentifier = "PTerminalTab"
 
-        let terminalView = PTerminalView(frame: frame)
-        terminalView.fontSize = fontSize
-        // Apply saved theme
-        let themeIdx = currentThemeIndex
-        if themeIdx < Themes.all.count {
-            Themes.all[themeIdx].apply(to: terminalView.terminalView)
+        let splitPane = SplitPaneView(frame: frame)
+        splitPane.fontSize = fontSize
+        splitPane.themeIndex = currentThemeIndex
+        // Apply saved theme to the initial terminal
+        if let terminal = splitPane.activeTerminal, currentThemeIndex < Themes.all.count {
+            Themes.all[currentThemeIndex].apply(to: terminal.terminalView)
         }
-        window.contentView = terminalView
+        window.contentView = splitPane
 
         if let existing = existingWindow {
             existing.addTabbedWindow(window, ordered: .above)
@@ -80,6 +80,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         shellMenu.addItem(renameItem)
         shellMenu.addItem(.separator())
         shellMenu.addItem(withTitle: "Close Tab", action: #selector(closeTab), keyEquivalent: "w")
+        shellMenu.addItem(.separator())
+        shellMenu.addItem(withTitle: "Split Vertically", action: #selector(splitVertical), keyEquivalent: "d")
+        let splitHItem = NSMenuItem(title: "Split Horizontally", action: #selector(splitHorizontal), keyEquivalent: "d")
+        splitHItem.keyEquivalentModifierMask = [.command, .shift]
+        shellMenu.addItem(splitHItem)
+        let closePaneItem = NSMenuItem(title: "Close Pane", action: #selector(closePane), keyEquivalent: "w")
+        closePaneItem.keyEquivalentModifierMask = [.command, .option]
+        shellMenu.addItem(closePaneItem)
+        shellMenu.addItem(.separator())
         let historyItem = NSMenuItem(title: "Show History", action: #selector(showHistoryAction), keyEquivalent: "h")
         historyItem.keyEquivalentModifierMask = [.command, .shift]
         shellMenu.addItem(historyItem)
@@ -210,6 +219,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Actions
 
+    /// Get the active terminal view from the current window
+    private func activeTerminal() -> PTerminalView? {
+        if let split = NSApp.keyWindow?.contentView as? SplitPaneView {
+            return split.activeTerminal
+        }
+        return NSApp.keyWindow?.contentView as? PTerminalView
+    }
+
     @objc func newTab() {
         createNewWindow(tabIn: NSApp.keyWindow)
     }
@@ -220,6 +237,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func closeTab() {
         NSApp.keyWindow?.close()
+    }
+
+    @objc func splitVertical() {
+        if let splitPane = NSApp.keyWindow?.contentView as? SplitPaneView {
+            splitPane.splitVertical()
+        }
+    }
+
+    @objc func splitHorizontal() {
+        if let splitPane = NSApp.keyWindow?.contentView as? SplitPaneView {
+            splitPane.splitHorizontal()
+        }
+    }
+
+    @objc func closePane() {
+        if let splitPane = NSApp.keyWindow?.contentView as? SplitPaneView {
+            if splitPane.isSplit {
+                splitPane.closePane()
+            } else {
+                NSApp.keyWindow?.close()
+            }
+        }
     }
 
     @objc func showHistoryAction() {
@@ -330,6 +369,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .init(title: "New Tab", subtitle: "Open a new terminal tab", shortcut: "⌘T") { [weak self] in self?.newTab() },
             .init(title: "New Window", subtitle: "Open a new terminal window", shortcut: "⌘N") { [weak self] in self?.newWindow() },
             .init(title: "Close Tab", subtitle: "Close current tab", shortcut: "⌘W") { [weak self] in self?.closeTab() },
+            .init(title: "Split Vertically", subtitle: "Split pane side by side", shortcut: "⌘D") { [weak self] in self?.splitVertical() },
+            .init(title: "Split Horizontally", subtitle: "Split pane top and bottom", shortcut: "⇧⌘D") { [weak self] in self?.splitHorizontal() },
+            .init(title: "Close Pane", subtitle: "Close current split pane", shortcut: "⌥⌘W") { [weak self] in self?.closePane() },
             .init(title: "Rename Tab", subtitle: "Rename the current tab", shortcut: "⇧⌘R") { [weak self] in self?.renameTab() },
             .init(title: "Find", subtitle: "Search in terminal output", shortcut: "⌘F") {
                 if let view = NSApp.keyWindow?.contentView as? PTerminalView {
