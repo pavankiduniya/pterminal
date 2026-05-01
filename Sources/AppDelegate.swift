@@ -65,6 +65,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let appMenu = NSMenu()
         appMenu.addItem(withTitle: "About PTerminal", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
         appMenu.addItem(.separator())
+        appMenu.addItem(withTitle: "Preferences...", action: #selector(showPreferences), keyEquivalent: ",")
+        appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Quit PTerminal", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         let appMenuItem = NSMenuItem()
         appMenuItem.submenu = appMenu
@@ -227,6 +229,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return NSApp.keyWindow?.contentView as? PTerminalView
     }
 
+    @objc func showPreferences() {
+        PreferencesWindow.show()
+    }
+
     @objc func newTab() {
         createNewWindow(tabIn: NSApp.keyWindow)
     }
@@ -367,6 +373,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let actions: [CommandPalette.PaletteAction] = [
             .init(title: "New Tab", subtitle: "Open a new terminal tab", shortcut: "⌘T") { [weak self] in self?.newTab() },
+            .init(title: "Preferences", subtitle: "Open settings window", shortcut: "⌘,") { [weak self] in self?.showPreferences() },
             .init(title: "New Window", subtitle: "Open a new terminal window", shortcut: "⌘N") { [weak self] in self?.newWindow() },
             .init(title: "Close Tab", subtitle: "Close current tab", shortcut: "⌘W") { [weak self] in self?.closeTab() },
             .init(title: "Split Vertically", subtitle: "Split pane side by side", shortcut: "⌘D") { [weak self] in self?.splitVertical() },

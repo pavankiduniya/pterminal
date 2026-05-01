@@ -31,7 +31,7 @@
 | 24 | Theme persistence | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 25 | Font zoom (Cmd+/−/0) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 26 | Window transparency | ✅ | ✅ | ✅ | ❌ | ❌ | — | Done |
-| 27 | Settings/preferences window | ❌ | ✅ | ✅ | ✅ | ✅ | Medium | Planned |
+| 27 | Settings/preferences window | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | | **SEARCH & NAVIGATION** | | | | | | | |
 | 28 | Find bar (Cmd+F) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 29 | Find Next/Previous | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
@@ -64,7 +64,7 @@
 | 53 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | | **PLANNED — NOT YET BUILT** | | | | | | | |
 | 54 | Split panes (Cmd+D) | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
-| 55 | Settings/preferences window | ❌ | ✅ | ✅ | ✅ | ✅ | High | Planned |
+| 55 | Settings/preferences window | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 56 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
 | 57 | Autocomplete from history | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
 | 58 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
