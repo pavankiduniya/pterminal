@@ -9,6 +9,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var commandPalette: CommandPalette?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Load saved settings
+        let savedFontSize = UserDefaults.standard.integer(forKey: "fontSize")
+        if savedFontSize > 0 { fontSize = CGFloat(savedFontSize) }
+
         setupMenuBar()
         refreshSavedSessionsMenu()
         createNewWindow()

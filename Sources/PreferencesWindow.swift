@@ -255,10 +255,18 @@ class PreferencesWindow: NSWindow {
         if let label = sender.superview?.viewWithTag(501) as? NSTextField {
             label.stringValue = "\(sender.integerValue)pt"
         }
+        let size = CGFloat(sender.integerValue)
         UserDefaults.standard.set(sender.integerValue, forKey: "fontSize")
-        // Apply live
+        // Apply live to all terminals
         if let delegate = NSApp.delegate as? AppDelegate {
-            delegate.fontSize = CGFloat(sender.integerValue)
+            delegate.fontSize = size
+        }
+        for window in NSApp.windows {
+            if let split = window.contentView as? SplitPaneView {
+                for terminal in split.allTerminals {
+                    terminal.fontSize = size
+                }
+            }
         }
     }
 
@@ -298,7 +306,10 @@ class PreferencesWindow: NSWindow {
         }
         UserDefaults.standard.set(sender.integerValue, forKey: "windowOpacity")
         let alpha = CGFloat(sender.integerValue) / 100.0
-        NSApp.keyWindow?.alphaValue = alpha
+        for window in NSApp.windows where window !== self {
+            window.alphaValue = alpha
+            window.isOpaque = sender.integerValue == 100
+        }
     }
 
     @objc private func cursorBlinkChanged(_ sender: NSButton) {
