@@ -5,11 +5,27 @@ import SwiftTerm
 class RecordableTerminalView: LocalProcessTerminalView {
     var recorder: SessionRecorder?
     weak var parentView: PTerminalView?
+    var isInSSH = false
 
     override func dataReceived(slice: ArraySlice<UInt8>) {
         super.dataReceived(slice: slice)
         if let str = String(bytes: slice, encoding: .utf8) {
             recorder?.recordOutput(str)
+            // Detect SSH disconnect — revert theme
+            if isInSSH {
+                if str.contains("Connection to") && str.contains("closed") ||
+                   str.contains("logout") ||
+                   str.contains("Connection closed") {
+                    isInSSH = false
+                    DispatchQueue.main.async { [weak self] in
+                        // Revert to saved default theme
+                        let savedTheme = UserDefaults.standard.integer(forKey: "selectedTheme")
+                        if savedTheme < Themes.all.count, let tv = self {
+                            Themes.all[savedTheme].apply(to: tv)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -393,6 +409,7 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
                         // Use current pane
                         let cmd = conn.sshCommand
                         self.terminalView.send(txt: cmd + "\n")
+                        self.terminalView.isInSSH = true
                         if conn.themeIndex < Themes.all.count {
                             Themes.all[conn.themeIndex].apply(to: self.terminalView)
                         }
@@ -404,6 +421,7 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
                                 if let terminal = split.activeTerminal {
                                     let cmd = conn.sshCommand
                                     terminal.terminalView.send(txt: cmd + "\n")
+                                    terminal.terminalView.isInSSH = true
                                     if conn.themeIndex < Themes.all.count {
                                         Themes.all[conn.themeIndex].apply(to: terminal.terminalView)
                                     }
@@ -418,6 +436,7 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
                     if i == 0 {
                         let cmd = conn.sshCommand
                         self.terminalView.send(txt: cmd + "\n")
+                        self.terminalView.isInSSH = true
                         if conn.themeIndex < Themes.all.count {
                             Themes.all[conn.themeIndex].apply(to: self.terminalView)
                         }
@@ -428,6 +447,7 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
                                let terminal = split.activeTerminal {
                                 let cmd = conn.sshCommand
                                 terminal.terminalView.send(txt: cmd + "\n")
+                                terminal.terminalView.isInSSH = true
                                 if conn.themeIndex < Themes.all.count {
                                     Themes.all[conn.themeIndex].apply(to: terminal.terminalView)
                                 }

@@ -494,6 +494,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if conn.port != 22 { cmd += " -p \(conn.port)" }
             cmd += " \(conn.username)@\(conn.host)"
             view.terminalView.send(txt: cmd + "\n")
+            view.terminalView.isInSSH = true
         }
     }
 
@@ -646,6 +647,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if port != 22 { cmd += " -p \(port)" }
             cmd += " \(user)@\(host)"
             view.terminalView.send(txt: cmd + "\n")
+            view.terminalView.isInSSH = true
             NSApp.keyWindow?.title = "\(user)@\(host)"
         }
     }
