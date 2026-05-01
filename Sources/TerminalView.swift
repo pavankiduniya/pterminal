@@ -126,131 +126,110 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
             .appendingPathComponent("PTerminal/history.db").path
 
         // pcon — interactive SSH session picker with tree view
-        let pconScript = """
+        let pconScript = #"""
         #!/bin/bash
-        DB="\(dbPath)"
+        DB="DBPATH"
         if [ ! -f "$DB" ]; then echo "No saved sessions."; exit 1; fi
 
-        echo ""
-        echo "\\033[32m📡 PTerminal - Saved Sessions\\033[0m"
-        echo "\\033[90m─────────────────────────────────────────\\033[0m"
-        echo ""
+        G=$'\e[32m'; Y=$'\e[33m'; C=$'\e[36m'; D=$'\e[90m'; R=$'\e[0m'; RD=$'\e[31m'
 
-        # Get all connections with folders
+        printf "\n${G}📡 PTerminal - Saved Sessions${R}\n"
+        printf "${D}─────────────────────────────────────────${R}\n\n"
+
         CONNECTIONS=$(sqlite3 "$DB" "SELECT id, folder, name, username, host, port, identity_file FROM ssh_connections ORDER BY folder, name;" 2>/dev/null)
 
         if [ -z "$CONNECTIONS" ]; then
             echo "  No saved sessions. Use Cmd+Shift+S to add one."
-            echo ""
-            exit 0
+            echo ""; exit 0
         fi
 
-        # Build tree display
-        LAST_FOLDER=""
-        INDEX=0
-        declare -a IDS
-        declare -a CMDS
+        LAST_FOLDER=""; INDEX=0
+        declare -a IDS; declare -a CMDS
 
         while IFS='|' read -r id folder name user host port keyfile; do
-            # Show folder header if changed
             if [ "$folder" != "$LAST_FOLDER" ] && [ -n "$folder" ]; then
-                # Show nested folders
                 IFS='/' read -ra PARTS <<< "$folder"
                 INDENT=""
                 for part in "${PARTS[@]}"; do
-                    echo "  ${INDENT}\\033[33m📁 ${part}\\033[0m"
+                    printf "  ${INDENT}${Y}📁 ${part}${R}\n"
                     INDENT="${INDENT}  "
                 done
                 LAST_FOLDER="$folder"
             elif [ -z "$folder" ] && [ -n "$LAST_FOLDER" ]; then
-                LAST_FOLDER=""
-                echo ""
+                LAST_FOLDER=""; echo ""
             fi
 
-            INDEX=$((INDEX + 1))
-            IDS[$INDEX]=$id
-
-            # Build SSH command
+            INDEX=$((INDEX + 1)); IDS[$INDEX]=$id
             CMD="ssh"
             if [ -n "$keyfile" ]; then CMD="$CMD -i $keyfile"; fi
             if [ "$port" != "22" ] && [ -n "$port" ]; then CMD="$CMD -p $port"; fi
-            CMD="$CMD ${user}@${host}"
-            CMDS[$INDEX]="$CMD"
+            CMD="$CMD ${user}@${host}"; CMDS[$INDEX]="$CMD"
 
             INDENT=""
             if [ -n "$folder" ]; then
                 IFS='/' read -ra PARTS <<< "$folder"
                 for part in "${PARTS[@]}"; do INDENT="${INDENT}  "; done
             fi
-            echo "  ${INDENT}\\033[36m[$INDEX]\\033[0m $name  \\033[90m— ${user}@${host}\\033[0m"
+            printf "  ${INDENT}${C}[${INDEX}]${R} ${name}  ${D}— ${user}@${host}${R}\n"
         done <<< "$CONNECTIONS"
 
-        echo ""
-        echo -n "\\033[32mSelect [1-$INDEX] or q to cancel: \\033[0m"
+        printf "\n${G}Select [1-${INDEX}] or q to cancel: ${R}"
         read -r CHOICE
 
-        if [ "$CHOICE" = "q" ] || [ "$CHOICE" = "Q" ] || [ -z "$CHOICE" ]; then
-            exit 0
-        fi
+        if [ "$CHOICE" = "q" ] || [ "$CHOICE" = "Q" ] || [ -z "$CHOICE" ]; then exit 0; fi
 
         if [ "$CHOICE" -ge 1 ] 2>/dev/null && [ "$CHOICE" -le "$INDEX" ] 2>/dev/null; then
-            echo ""
-            echo "\\033[32m→ Connecting: ${CMDS[$CHOICE]}\\033[0m"
-            echo ""
-            # Update last_used
+            printf "\n${G}→ Connecting: ${CMDS[$CHOICE]}${R}\n\n"
             sqlite3 "$DB" "UPDATE ssh_connections SET last_used=$(date +%s) WHERE id=${IDS[$CHOICE]};" 2>/dev/null
             eval "${CMDS[$CHOICE]}"
         else
-            echo "\\033[31mInvalid selection.\\033[0m"
+            printf "${RD}Invalid selection.${R}\n"
         fi
-        """
+        """#.replacingOccurrences(of: "DBPATH", with: dbPath)
         try? pconScript.write(toFile: binDir + "/pcon", atomically: true, encoding: .utf8)
         try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: binDir + "/pcon")
 
         // phistory — show command history
-        let phistoryScript = """
+        let phistoryScript = #"""
         #!/bin/bash
-        DB="\(dbPath)"
+        DB="DBPATH"
         if [ ! -f "$DB" ]; then echo "No history."; exit 1; fi
         LIMIT=${1:-30}
-        echo ""
-        echo "\\033[32m📜 PTerminal - Command History (last $LIMIT)\\033[0m"
-        echo "\\033[90m─────────────────────────────────────────\\033[0m"
+        G=$'\e[32m'; D=$'\e[90m'; RD=$'\e[31m'; R=$'\e[0m'
+        printf "\n${G}📜 PTerminal - Command History (last ${LIMIT})${R}\n"
+        printf "${D}─────────────────────────────────────────${R}\n"
         sqlite3 "$DB" "SELECT CASE WHEN success=1 THEN '✓' ELSE '✗' END, datetime(timestamp, 'unixepoch', 'localtime'), command FROM history WHERE TRIM(command) != '' ORDER BY timestamp DESC LIMIT $LIMIT;" 2>/dev/null | while IFS='|' read -r status ts cmd; do
             if [ "$status" = "✓" ]; then
-                echo " \\033[32m$status\\033[0m \\033[90m$ts\\033[0m  $cmd"
+                printf " ${G}${status}${R} ${D}${ts}${R}  ${cmd}\n"
             else
-                echo " \\033[31m$status\\033[0m \\033[90m$ts\\033[0m  $cmd"
+                printf " ${RD}${status}${R} ${D}${ts}${R}  ${cmd}\n"
             fi
         done
         echo ""
-        """
+        """#.replacingOccurrences(of: "DBPATH", with: dbPath)
         try? phistoryScript.write(toFile: binDir + "/phistory", atomically: true, encoding: .utf8)
         try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: binDir + "/phistory")
 
         // phelp — show PTerminal help
-        let phelpScript = """
+        let phelpScript = #"""
         #!/bin/bash
-        echo ""
-        echo "\\033[32m🖥  PTerminal v0.10.0 - Custom Commands\\033[0m"
-        echo "\\033[90m─────────────────────────────────────────\\033[0m"
-        echo ""
-        echo "  \\033[36mpcon\\033[0m         Interactive SSH session picker (tree view)"
-        echo "  \\033[36mphistory\\033[0m     Show command history with status"
-        echo "  \\033[36mphistory 50\\033[0m  Show last 50 commands"
-        echo "  \\033[36mphelp\\033[0m        Show this help"
-        echo ""
-        echo "\\033[32m  Keyboard Shortcuts:\\033[0m"
-        echo "  Cmd+T  New tab       Cmd+D  Split vertical"
-        echo "  Cmd+N  New window    Cmd+⇧D Split horizontal"
-        echo "  Cmd+W  Close tab     Cmd+⌥W Close pane"
-        echo "  Cmd+P  Palette       Cmd+E  History search"
-        echo "  Cmd+F  Find          Cmd+K  Clear"
-        echo "  Cmd+⇧S SSH connect   Cmd+⇧H Show history"
-        echo "  Cmd+⇧B Broadcast     Cmd+⌥R Record session"
-        echo "  Cmd+,  Preferences   Cmd+/  All shortcuts"
-        echo ""
-        """
+        G=$'\e[32m'; C=$'\e[36m'; D=$'\e[90m'; R=$'\e[0m'
+        printf "\n${G}🖥  PTerminal v0.10.0 - Custom Commands${R}\n"
+        printf "${D}─────────────────────────────────────────${R}\n\n"
+        printf "  ${C}pcon${R}         Interactive SSH session picker (tree view)\n"
+        printf "  ${C}phistory${R}     Show command history with status\n"
+        printf "  ${C}phistory 50${R}  Show last 50 commands\n"
+        printf "  ${C}phelp${R}        Show this help\n\n"
+        printf "${G}  Keyboard Shortcuts:${R}\n"
+        printf "  Cmd+T  New tab       Cmd+D  Split vertical\n"
+        printf "  Cmd+N  New window    Cmd+⇧D Split horizontal\n"
+        printf "  Cmd+W  Close tab     Cmd+⌥W Close pane\n"
+        printf "  Cmd+P  Palette       Cmd+E  History search\n"
+        printf "  Cmd+F  Find          Cmd+K  Clear\n"
+        printf "  Cmd+⇧S SSH connect   Cmd+⇧H Show history\n"
+        printf "  Cmd+⇧B Broadcast     Cmd+⌥R Record session\n"
+        printf "  Cmd+,  Preferences   Cmd+/  All shortcuts\n\n"
+        """#
         try? phelpScript.write(toFile: binDir + "/phelp", atomically: true, encoding: .utf8)
         try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: binDir + "/phelp")
 
