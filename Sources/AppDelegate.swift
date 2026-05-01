@@ -235,6 +235,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return NSApp.keyWindow?.contentView as? PTerminalView
     }
 
+    /// Create a folder combo box with existing folders as options
+    private func createFolderComboBox(frame: NSRect, currentValue: String = "") -> NSComboBox {
+        let combo = NSComboBox(frame: frame)
+        combo.placeholderString = "e.g. Clients/Canmove (use / for nesting)"
+        combo.stringValue = currentValue
+        combo.completes = true
+        combo.isEditable = true
+
+        // Get existing unique folders
+        let connections = SSHManager.shared.getAll()
+        var folders = Set<String>()
+        for conn in connections {
+            if !conn.folder.isEmpty {
+                folders.insert(conn.folder)
+                // Also add parent folders
+                let parts = conn.folder.split(separator: "/")
+                var path = ""
+                for part in parts {
+                    path = path.isEmpty ? String(part) : path + "/" + part
+                    folders.insert(path)
+                }
+            }
+        }
+        for folder in folders.sorted() {
+            combo.addItem(withObjectValue: folder)
+        }
+        return combo
+    }
+
     @objc func showPreferences() {
         PreferencesWindow.show()
     }
@@ -554,8 +583,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         folderLabel.frame = NSRect(x: 0, y: 5 - yOffset, width: 50, height: 20)
         container.addSubview(folderLabel)
 
-        let folderField = NSTextField(frame: NSRect(x: 55, y: 3 - yOffset, width: 140, height: 24))
-        folderField.placeholderString = "e.g. Project Alpha"
+        let folderField = createFolderComboBox(frame: NSRect(x: 55, y: 3 - yOffset, width: 140, height: 24))
         container.addSubview(folderField)
 
         // Theme picker
@@ -640,8 +668,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let folderLabel = NSTextField(labelWithString: "Folder:")
         folderLabel.frame = NSRect(x: 0, y: 168, width: 70, height: 20)
         container.addSubview(folderLabel)
-        let folderField = NSTextField(frame: NSRect(x: 75, y: 166, width: 270, height: 24))
-        folderField.placeholderString = "e.g. Clients/Canmove (use / for nesting)"
+        let folderField = createFolderComboBox(frame: NSRect(x: 75, y: 166, width: 270, height: 24))
         container.addSubview(folderField)
 
         let hostLabel = NSTextField(labelWithString: "Host:")
@@ -861,9 +888,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let folderLabel = NSTextField(labelWithString: "Folder:")
         folderLabel.frame = NSRect(x: 0, y: 140, width: 70, height: 20)
         container.addSubview(folderLabel)
-        let folderField = NSTextField(frame: NSRect(x: 75, y: 138, width: 270, height: 24))
-        folderField.stringValue = conn.folder
-        folderField.placeholderString = "e.g. Project Alpha"
+        let folderField = createFolderComboBox(frame: NSRect(x: 75, y: 138, width: 270, height: 24), currentValue: conn.folder)
         container.addSubview(folderField)
 
         let hostLabel = NSTextField(labelWithString: "Host:")
