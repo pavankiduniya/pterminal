@@ -2,7 +2,7 @@
 
 A modern, feature-rich terminal emulator for macOS built with Swift and [SwiftTerm](https://github.com/migueldeicaza/SwiftTerm).
 
-**Current Version: v0.9.0 (Beta)**
+**Current Version: v0.10.0 (Beta)**
 
 ## Features
 

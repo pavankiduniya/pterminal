@@ -135,7 +135,7 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         let r = "\u{1B}[0m"
         let nl = "\r\n"
         var msg = ""
-        msg += "\(g)Welcome to PTerminal v0.9.0 - Pavan's Terminal\(r)" + nl
+        msg += "\(g)Welcome to PTerminal v0.10.0 - Pavan's Terminal\(r)" + nl
         msg += nl
         msg += "\(c)  Cmd+T\(d) New tab   \(c)Cmd+N\(d) New window   \(c)Cmd+W\(d) Close tab\(r)" + nl
         msg += "\(c)  Cmd+F\(d) Search    \(c)Cmd+K\(d) Clear        \(c)Cmd+/\(d) All shortcuts\(r)" + nl
