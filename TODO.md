@@ -67,7 +67,7 @@
 | 56 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | | **PLANNED — NOT YET BUILT** | | | | | | | |
 | 57 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
-| 58 | Autocomplete from history | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 58 | Autocomplete from history | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
 | 59 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
 | 60 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium | Planned |
 | 61 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
@@ -116,7 +116,7 @@
 
 | Terminal | Done (of 101) | Unique Features |
 |----------|--------------|-----------------|
-| **PTerminal** | **57** (55 done + 2 partial) | SSH nested folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
+| **PTerminal** | **58** (56 done + 2 partial) | SSH nested folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
 | Terminal.app | 38 | Built into macOS |
 | iTerm2 | 62 | tmux, profiles, triggers, instant replay, plugin system |
 | Warp | 52 | AI assistant, command blocks, collaboration, multi-line editing |
