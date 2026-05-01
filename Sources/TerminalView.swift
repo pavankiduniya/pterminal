@@ -125,114 +125,11 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         let dbPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
             .appendingPathComponent("PTerminal/history.db").path
 
+        writePconScript(to: binDir + "/pcon", dbPath: dbPath)
+        writePhistoryScript(to: binDir + "/phistory", dbPath: dbPath)
+        writePhelpScript(to: binDir + "/phelp")
+
         // pcon — interactive SSH session picker with tree view
-        let pconScript = #"""
-        #!/bin/bash
-        DB="DBPATH"
-        if [ ! -f "$DB" ]; then echo "No saved sessions."; exit 1; fi
-
-        G=$'\e[32m'; Y=$'\e[33m'; C=$'\e[36m'; D=$'\e[90m'; R=$'\e[0m'; RD=$'\e[31m'
-
-        printf "\n${G}📡 PTerminal - Saved Sessions${R}\n"
-        printf "${D}─────────────────────────────────────────${R}\n\n"
-
-        CONNECTIONS=$(sqlite3 "$DB" "SELECT id, folder, name, username, host, port, identity_file FROM ssh_connections ORDER BY folder, name;" 2>/dev/null)
-
-        if [ -z "$CONNECTIONS" ]; then
-            echo "  No saved sessions. Use Cmd+Shift+S to add one."
-            echo ""; exit 0
-        fi
-
-        LAST_FOLDER=""; INDEX=0
-        declare -a IDS; declare -a CMDS
-
-        while IFS='|' read -r id folder name user host port keyfile; do
-            if [ "$folder" != "$LAST_FOLDER" ] && [ -n "$folder" ]; then
-                IFS='/' read -ra PARTS <<< "$folder"
-                INDENT=""
-                for part in "${PARTS[@]}"; do
-                    printf "  ${INDENT}${Y}📁 ${part}${R}\n"
-                    INDENT="${INDENT}  "
-                done
-                LAST_FOLDER="$folder"
-            elif [ -z "$folder" ] && [ -n "$LAST_FOLDER" ]; then
-                LAST_FOLDER=""; echo ""
-            fi
-
-            INDEX=$((INDEX + 1)); IDS[$INDEX]=$id
-            CMD="ssh"
-            if [ -n "$keyfile" ]; then CMD="$CMD -i $keyfile"; fi
-            if [ "$port" != "22" ] && [ -n "$port" ]; then CMD="$CMD -p $port"; fi
-            CMD="$CMD ${user}@${host}"; CMDS[$INDEX]="$CMD"
-
-            INDENT=""
-            if [ -n "$folder" ]; then
-                IFS='/' read -ra PARTS <<< "$folder"
-                for part in "${PARTS[@]}"; do INDENT="${INDENT}  "; done
-            fi
-            printf "  ${INDENT}${C}[${INDEX}]${R} ${name}  ${D}— ${user}@${host}${R}\n"
-        done <<< "$CONNECTIONS"
-
-        printf "\n${G}Select [1-${INDEX}] or q to cancel: ${R}"
-        read -r CHOICE
-
-        if [ "$CHOICE" = "q" ] || [ "$CHOICE" = "Q" ] || [ -z "$CHOICE" ]; then exit 0; fi
-
-        if [ "$CHOICE" -ge 1 ] 2>/dev/null && [ "$CHOICE" -le "$INDEX" ] 2>/dev/null; then
-            printf "\n${G}→ Connecting: ${CMDS[$CHOICE]}${R}\n\n"
-            sqlite3 "$DB" "UPDATE ssh_connections SET last_used=$(date +%s) WHERE id=${IDS[$CHOICE]};" 2>/dev/null
-            eval "${CMDS[$CHOICE]}"
-        else
-            printf "${RD}Invalid selection.${R}\n"
-        fi
-        """#.replacingOccurrences(of: "DBPATH", with: dbPath)
-        try? pconScript.write(toFile: binDir + "/pcon", atomically: true, encoding: .utf8)
-        try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: binDir + "/pcon")
-
-        // phistory — show command history
-        let phistoryScript = #"""
-        #!/bin/bash
-        DB="DBPATH"
-        if [ ! -f "$DB" ]; then echo "No history."; exit 1; fi
-        LIMIT=${1:-30}
-        G=$'\e[32m'; D=$'\e[90m'; RD=$'\e[31m'; R=$'\e[0m'
-        printf "\n${G}📜 PTerminal - Command History (last ${LIMIT})${R}\n"
-        printf "${D}─────────────────────────────────────────${R}\n"
-        sqlite3 "$DB" "SELECT CASE WHEN success=1 THEN '✓' ELSE '✗' END, datetime(timestamp, 'unixepoch', 'localtime'), command FROM history WHERE TRIM(command) != '' ORDER BY timestamp DESC LIMIT $LIMIT;" 2>/dev/null | while IFS='|' read -r status ts cmd; do
-            if [ "$status" = "✓" ]; then
-                printf " ${G}${status}${R} ${D}${ts}${R}  ${cmd}\n"
-            else
-                printf " ${RD}${status}${R} ${D}${ts}${R}  ${cmd}\n"
-            fi
-        done
-        echo ""
-        """#.replacingOccurrences(of: "DBPATH", with: dbPath)
-        try? phistoryScript.write(toFile: binDir + "/phistory", atomically: true, encoding: .utf8)
-        try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: binDir + "/phistory")
-
-        // phelp — show PTerminal help
-        let phelpScript = #"""
-        #!/bin/bash
-        G=$'\e[32m'; C=$'\e[36m'; D=$'\e[90m'; R=$'\e[0m'
-        printf "\n${G}🖥  PTerminal v0.10.0 - Custom Commands${R}\n"
-        printf "${D}─────────────────────────────────────────${R}\n\n"
-        printf "  ${C}pcon${R}         Interactive SSH session picker (tree view)\n"
-        printf "  ${C}phistory${R}     Show command history with status\n"
-        printf "  ${C}phistory 50${R}  Show last 50 commands\n"
-        printf "  ${C}phelp${R}        Show this help\n\n"
-        printf "${G}  Keyboard Shortcuts:${R}\n"
-        printf "  Cmd+T  New tab       Cmd+D  Split vertical\n"
-        printf "  Cmd+N  New window    Cmd+⇧D Split horizontal\n"
-        printf "  Cmd+W  Close tab     Cmd+⌥W Close pane\n"
-        printf "  Cmd+P  Palette       Cmd+E  History search\n"
-        printf "  Cmd+F  Find          Cmd+K  Clear\n"
-        printf "  Cmd+⇧S SSH connect   Cmd+⇧H Show history\n"
-        printf "  Cmd+⇧B Broadcast     Cmd+⌥R Record session\n"
-        printf "  Cmd+,  Preferences   Cmd+/  All shortcuts\n\n"
-        """#
-        try? phelpScript.write(toFile: binDir + "/phelp", atomically: true, encoding: .utf8)
-        try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: binDir + "/phelp")
-
         let zlogin = "[ -f \"\(home)/.zlogin\" ] && source \"\(home)/.zlogin\"\n"
         try? zlogin.write(toFile: zshDir + "/.zlogin", atomically: true, encoding: .utf8)
 
@@ -522,5 +419,132 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
 
         // Bounce dock icon
         NSApp.requestUserAttention(.criticalRequest)
+    }
+
+    // MARK: - Custom command scripts
+
+    private func writeScript(to path: String, content: String) {
+        try? content.write(toFile: path, atomically: true, encoding: .utf8)
+        try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: path)
+    }
+
+    private func writePconScript(to path: String, dbPath: String) {
+        var s = "#!/bin/bash\n"
+        s += "DB=\"\(dbPath)\"\n"
+        s += "if [ ! -f \"$DB\" ]; then echo \"No saved sessions.\"; exit 1; fi\n"
+        s += "G=$'\\e[32m'; Y=$'\\e[33m'; C=$'\\e[36m'; D=$'\\e[90m'; W=$'\\e[37m'; R=$'\\e[0m'; RD=$'\\e[31m'; B=$'\\e[1m'\n"
+        s += "printf \"\\n${B}${G}📡 PTerminal - Saved Sessions${R}\\n\"\n"
+        s += "printf \"${D}─────────────────────────────────────────────────${R}\\n\\n\"\n"
+        s += "CONNECTIONS=$(sqlite3 \"$DB\" \"SELECT id, folder, name, username, host, port, identity_file FROM ssh_connections ORDER BY folder, name;\" 2>/dev/null)\n"
+        s += "if [ -z \"$CONNECTIONS\" ]; then echo \"  No saved sessions. Use Cmd+Shift+S to add one.\"; echo \"\"; exit 0; fi\n"
+        s += "LAST_FOLDER=\"\"; INDEX=0; FINDEX=0\n"
+        s += "declare -a IDS; declare -a CMDS; declare -a FOLDERS; declare -a FOLDER_NAMES\n"
+        // Build display + track folders
+        s += "while IFS='|' read -r id folder name user host port keyfile; do\n"
+        s += "  if [ \"$folder\" != \"$LAST_FOLDER\" ] && [ -n \"$folder\" ]; then\n"
+        s += "    FINDEX=$((FINDEX + 1)); FOLDERS[$FINDEX]=\"$folder\"\n"
+        s += "    IFS='/' read -ra PARTS <<< \"$folder\"\n"
+        s += "    INDENT=\"\"; FNAME=\"\"\n"
+        s += "    for part in \"${PARTS[@]}\"; do printf \"  ${INDENT}${Y}📁 ${part}${R}\\n\"; INDENT=\"${INDENT}  \"; FNAME=\"$part\"; done\n"
+        s += "    FOLDER_NAMES[$FINDEX]=\"$FNAME\"\n"
+        s += "    LAST_FOLDER=\"$folder\"\n"
+        s += "  elif [ -z \"$folder\" ] && [ -n \"$LAST_FOLDER\" ]; then LAST_FOLDER=\"\"; echo \"\"; fi\n"
+        s += "  INDEX=$((INDEX + 1)); IDS[$INDEX]=$id\n"
+        s += "  CMD=\"ssh\"\n"
+        s += "  if [ -n \"$keyfile\" ]; then CMD=\"$CMD -i $keyfile\"; fi\n"
+        s += "  if [ \"$port\" != \"22\" ] && [ -n \"$port\" ]; then CMD=\"$CMD -p $port\"; fi\n"
+        s += "  CMD=\"$CMD ${user}@${host}\"; CMDS[$INDEX]=\"$CMD\"\n"
+        s += "  INDENT=\"\"\n"
+        s += "  if [ -n \"$folder\" ]; then IFS='/' read -ra PARTS <<< \"$folder\"; for part in \"${PARTS[@]}\"; do INDENT=\"${INDENT}  \"; done; fi\n"
+        s += "  printf \"  ${INDENT}${C}[${INDEX}]${R} ${name}  ${D}— ${user}@${host}${R}\\n\"\n"
+        s += "done <<< \"$CONNECTIONS\"\n"
+        // Show folder options if any
+        s += "if [ $FINDEX -gt 0 ]; then\n"
+        s += "  printf \"\\n${D}─────────────────────────────────────────────────${R}\\n\"\n"
+        s += "  printf \"${Y}📁 Folders (connect all servers in folder):${R}\\n\"\n"
+        s += "  for i in $(seq 1 $FINDEX); do\n"
+        s += "    COUNT=$(sqlite3 \"$DB\" \"SELECT COUNT(*) FROM ssh_connections WHERE folder='${FOLDERS[$i]}' OR folder LIKE '${FOLDERS[$i]}/%';\" 2>/dev/null)\n"
+        s += "    printf \"  ${Y}[f${i}]${R} ${FOLDER_NAMES[$i]}  ${D}— ${COUNT} server(s)${R}\\n\"\n"
+        s += "  done\n"
+        s += "fi\n"
+        // Prompt
+        s += "printf \"\\n${G}Select [1-${INDEX}], [f1-f${FINDEX}] for folder, or q: ${R}\"\n"
+        s += "read -r CHOICE\n"
+        s += "if [ \"$CHOICE\" = \"q\" ] || [ \"$CHOICE\" = \"Q\" ] || [ -z \"$CHOICE\" ]; then exit 0; fi\n"
+        // Handle folder selection
+        s += "if [[ \"$CHOICE\" =~ ^f([0-9]+)$ ]]; then\n"
+        s += "  FI=${BASH_REMATCH[1]}\n"
+        s += "  if [ \"$FI\" -ge 1 ] 2>/dev/null && [ \"$FI\" -le \"$FINDEX\" ] 2>/dev/null; then\n"
+        s += "    FOLDER_PATH=\"${FOLDERS[$FI]}\"\n"
+        s += "    printf \"\\n${G}Opening all servers in ${FOLDER_NAMES[$FI]}${R}\\n\"\n"
+        s += "    printf \"${C}  [t]${R} Open in separate ${B}tabs${R}\\n\"\n"
+        s += "    printf \"${C}  [s]${R} Open in ${B}split panes${R}\\n\"\n"
+        s += "    printf \"${C}  [b]${R} Open in tabs with ${B}broadcast${R} enabled\\n\"\n"
+        s += "    printf \"\\n${G}Layout [t/s/b]: ${R}\"\n"
+        s += "    read -r LAYOUT\n"
+        // Get all commands for this folder
+        s += "    FCMDS=$(sqlite3 \"$DB\" \"SELECT 'ssh' || CASE WHEN identity_file IS NOT NULL AND identity_file != '' THEN ' -i ' || identity_file ELSE '' END || CASE WHEN port != 22 THEN ' -p ' || port ELSE '' END || ' ' || username || '@' || host FROM ssh_connections WHERE folder='${FOLDER_PATH}' OR folder LIKE '${FOLDER_PATH}/%' ORDER BY name;\" 2>/dev/null)\n"
+        s += "    if [ \"$LAYOUT\" = \"t\" ] || [ \"$LAYOUT\" = \"T\" ]; then\n"
+        s += "      FIRST=1\n"
+        s += "      while IFS= read -r FCMD; do\n"
+        s += "        if [ $FIRST -eq 1 ]; then printf \"\\n${G}→ ${FCMD}${R}\\n\\n\"; eval \"$FCMD\"; FIRST=0\n"
+        s += "        else printf \"\\n${D}(Open new tab for: ${FCMD})${R}\\n\"; fi\n"
+        s += "      done <<< \"$FCMDS\"\n"
+        s += "    elif [ \"$LAYOUT\" = \"b\" ] || [ \"$LAYOUT\" = \"B\" ]; then\n"
+        s += "      FIRST=1\n"
+        s += "      while IFS= read -r FCMD; do\n"
+        s += "        if [ $FIRST -eq 1 ]; then printf \"\\n${G}→ ${FCMD} (broadcast)${R}\\n\\n\"; eval \"$FCMD\"; FIRST=0\n"
+        s += "        else printf \"\\n${D}(Open new tab+broadcast for: ${FCMD})${R}\\n\"; fi\n"
+        s += "      done <<< \"$FCMDS\"\n"
+        s += "    else\n"
+        s += "      printf \"\\n${G}Connecting first server. Use Cmd+D to split for others.${R}\\n\"\n"
+        s += "      FIRST_CMD=$(echo \"$FCMDS\" | head -1)\n"
+        s += "      printf \"\\n${G}→ ${FIRST_CMD}${R}\\n\\n\"\n"
+        s += "      eval \"$FIRST_CMD\"\n"
+        s += "    fi\n"
+        s += "  else printf \"${RD}Invalid folder.${R}\\n\"; fi\n"
+        // Handle single selection
+        s += "elif [ \"$CHOICE\" -ge 1 ] 2>/dev/null && [ \"$CHOICE\" -le \"$INDEX\" ] 2>/dev/null; then\n"
+        s += "  printf \"\\n${G}→ Connecting: ${CMDS[$CHOICE]}${R}\\n\\n\"\n"
+        s += "  sqlite3 \"$DB\" \"UPDATE ssh_connections SET last_used=$(date +%s) WHERE id=${IDS[$CHOICE]};\" 2>/dev/null\n"
+        s += "  eval \"${CMDS[$CHOICE]}\"\n"
+        s += "else printf \"${RD}Invalid selection.${R}\\n\"; fi\n"
+        writeScript(to: path, content: s)
+    }
+
+    private func writePhistoryScript(to path: String, dbPath: String) {
+        var s = "#!/bin/bash\n"
+        s += "DB=\"\(dbPath)\"\n"
+        s += "if [ ! -f \"$DB\" ]; then echo \"No history.\"; exit 1; fi\n"
+        s += "LIMIT=${1:-30}\n"
+        s += "G=$'\\e[32m'; D=$'\\e[90m'; RD=$'\\e[31m'; R=$'\\e[0m'; B=$'\\e[1m'\n"
+        s += "printf \"\\n${B}${G}📜 PTerminal - Command History (last ${LIMIT})${R}\\n\"\n"
+        s += "printf \"${D}─────────────────────────────────────────${R}\\n\"\n"
+        s += "sqlite3 \"$DB\" \"SELECT CASE WHEN success=1 THEN '✓' ELSE '✗' END, datetime(timestamp, 'unixepoch', 'localtime'), command FROM history WHERE TRIM(command) != '' ORDER BY timestamp DESC LIMIT $LIMIT;\" 2>/dev/null | while IFS='|' read -r status ts cmd; do\n"
+        s += "  if [ \"$status\" = \"✓\" ]; then printf \" ${G}${status}${R} ${D}${ts}${R}  ${cmd}\\n\"\n"
+        s += "  else printf \" ${RD}${status}${R} ${D}${ts}${R}  ${cmd}\\n\"; fi\n"
+        s += "done\necho \"\"\n"
+        writeScript(to: path, content: s)
+    }
+
+    private func writePhelpScript(to path: String) {
+        var s = "#!/bin/bash\n"
+        s += "G=$'\\e[32m'; C=$'\\e[36m'; D=$'\\e[90m'; R=$'\\e[0m'; B=$'\\e[1m'\n"
+        s += "printf \"\\n${B}${G}🖥  PTerminal v0.10.0 - Custom Commands${R}\\n\"\n"
+        s += "printf \"${D}─────────────────────────────────────────${R}\\n\\n\"\n"
+        s += "printf \"  ${C}pcon${R}         Interactive SSH session picker (tree + folders)\\n\"\n"
+        s += "printf \"  ${C}phistory${R}     Show command history with status\\n\"\n"
+        s += "printf \"  ${C}phistory 50${R}  Show last 50 commands\\n\"\n"
+        s += "printf \"  ${C}phelp${R}        Show this help\\n\\n\"\n"
+        s += "printf \"${B}${G}  Keyboard Shortcuts:${R}\\n\"\n"
+        s += "printf \"  Cmd+T  New tab       Cmd+D  Split vertical\\n\"\n"
+        s += "printf \"  Cmd+N  New window    Cmd+⇧D Split horizontal\\n\"\n"
+        s += "printf \"  Cmd+W  Close tab     Cmd+⌥W Close pane\\n\"\n"
+        s += "printf \"  Cmd+P  Palette       Cmd+E  History search\\n\"\n"
+        s += "printf \"  Cmd+F  Find          Cmd+K  Clear\\n\"\n"
+        s += "printf \"  Cmd+⇧S SSH connect   Cmd+⇧H Show history\\n\"\n"
+        s += "printf \"  Cmd+⇧B Broadcast     Cmd+⌥R Record session\\n\"\n"
+        s += "printf \"  Cmd+,  Preferences   Cmd+/  All shortcuts\\n\\n\"\n"
+        writeScript(to: path, content: s)
     }
 }
