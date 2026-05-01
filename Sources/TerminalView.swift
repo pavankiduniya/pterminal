@@ -51,27 +51,23 @@ class RecordableTerminalView: LocalProcessTerminalView {
         menu.addItem(withTitle: "Clear Screen", action: #selector(clearFromMenu), keyEquivalent: "")
         menu.addItem(withTitle: "Find...", action: #selector(showFindFromMenu), keyEquivalent: "")
         menu.addItem(.separator())
-        let splitMenu = NSMenu()
-        splitMenu.addItem(withTitle: "Split Vertically", action: #selector(splitVFromMenu), keyEquivalent: "")
-        splitMenu.addItem(withTitle: "Split Horizontally", action: #selector(splitHFromMenu), keyEquivalent: "")
-        let splitItem = NSMenuItem(title: "Split Pane", action: nil, keyEquivalent: "")
-        splitItem.submenu = splitMenu
-        menu.addItem(splitItem)
+        menu.addItem(withTitle: "Split Vertically", action: #selector(splitVFromMenu), keyEquivalent: "")
+        menu.addItem(withTitle: "Split Horizontally", action: #selector(splitHFromMenu), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "SSH Quick Connect...", action: #selector(sshFromMenu), keyEquivalent: "")
         menu.addItem(withTitle: "New Tab", action: #selector(newTabFromMenu), keyEquivalent: "")
         return menu
     }
 
-    @objc private func clearFromMenu() { send(txt: "\u{0C}") }
-    @objc private func showFindFromMenu() {
+    @objc func clearFromMenu() { send(txt: "\u{0C}") }
+    @objc func showFindFromMenu() {
         let item = NSMenuItem(); item.tag = Int(NSFindPanelAction.showFindPanel.rawValue)
         performFindPanelAction(item)
     }
-    @objc private func splitVFromMenu() { (window?.contentView as? SplitPaneView)?.splitVertical() }
-    @objc private func splitHFromMenu() { (window?.contentView as? SplitPaneView)?.splitHorizontal() }
-    @objc private func sshFromMenu() { (NSApp.delegate as? AppDelegate)?.sshQuickConnect() }
-    @objc private func newTabFromMenu() { (NSApp.delegate as? AppDelegate)?.newTab() }
+    @objc func splitVFromMenu() { (window?.contentView as? SplitPaneView)?.splitVertical() }
+    @objc func splitHFromMenu() { (window?.contentView as? SplitPaneView)?.splitHorizontal() }
+    @objc func sshFromMenu() { (NSApp.delegate as? AppDelegate)?.sshQuickConnect() }
+    @objc func newTabFromMenu() { (NSApp.delegate as? AppDelegate)?.newTab() }
 
     // MARK: - Drag & drop file paths from Finder
 
