@@ -90,13 +90,34 @@
 | 78 | Focus mode | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
 | 79 | Auto-update checker | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
 | 80 | Password / Keychain integration | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
+| | **MORE PLANNED FEATURES** | | | | | | | |
+| 81 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
+| 82 | Multiple cursor colors (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium | Planned |
+| 83 | Bell notification (visual/audio/badge) | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
+| 84 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
+| 85 | Multi-language input (CJK/IME) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done (SwiftTerm) |
+| 86 | Drag & drop file path into terminal | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
+| 87 | Open URL on click/hover | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done (SwiftTerm) |
+| 88 | Right-click context menu | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
+| 89 | Touch Bar support (MacBook Pro) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 90 | Marks / bookmarks in scrollback | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
+| 91 | Semantic history (Cmd+click file to open in editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
+| 92 | Instant replay (rewind terminal output) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 93 | Coprocess / pipe output to script | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 94 | Password prompt detection & Keychain autofill | ❌ | ❌ | ❌ | ❌ | ❌ | Medium | Planned |
+| 95 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
+| 96 | Configurable scrollback limit | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
+| 97 | Automatic profile switching (by host/command) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
+| 98 | Plugin / extension system | ❌ | ❌ | ✅ (Python) | ❌ | ❌ | Low | Planned |
+| 99 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 100 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
 
 ## Summary
 
-| Terminal | Total Features (of 80) | Unique Features |
+| Terminal | Done Features (of 100) | Unique Features |
 |----------|----------------------|-----------------|
-| **PTerminal** | **53** | SSH folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette |
-| Terminal.app | 35 | Built into macOS |
-| iTerm2 | 52 | Split panes, tmux, profiles, triggers |
-| Warp | 48 | AI assistant, command blocks, collaboration |
-| Ghostty | 38 | GPU-native, scriptable API |
+| **PTerminal** | **55** | SSH folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
+| Terminal.app | 38 | Built into macOS |
+| iTerm2 | 62 | Split panes, tmux, profiles, triggers, instant replay, plugin system |
+| Warp | 52 | AI assistant, command blocks, collaboration, multi-line editing |
+| Ghostty | 42 | GPU-native, scriptable API, ligatures |
