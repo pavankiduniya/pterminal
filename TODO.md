@@ -47,76 +47,76 @@
 | 38 | Edit/delete connections | ✅ | ❌ | ✅ | ❌ | ❌ | — | Done |
 | 39 | Nested SSH session folders (unlimited depth) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
 | | **HISTORY & RECORDING** | | | | | | | |
-| 39 | Command history in SQLite | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 40 | History with success/fail (✓/✗) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 41 | Command execution time (ms) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 42 | Session recording (asciinema) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 43 | Export history CSV/JSON | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 44 | Show history (Cmd+Shift+H) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 40 | Command history in SQLite | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 41 | History with success/fail (✓/✗) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 42 | Command execution time (ms) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 43 | Session recording (asciinema) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
+| 44 | Export history CSV/JSON | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
+| 45 | Show history (Cmd+Shift+H) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
 | | **PRODUCTIVITY** | | | | | | | |
-| 45 | Broadcast input to all tabs/panes | ✅ | ❌ | ✅ | ❌ | ❌ | — | Done |
-| 46 | Smart paste protection | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 47 | Keyboard shortcuts help (Cmd+/) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 48 | Welcome message | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 49 | Long command notification (>10s) | ✅ | ❌ | ✅ | ✅ | ❌ | — | Done |
-| 50 | Clear screen (Cmd+K) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 51 | Headless mode (CLI) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 52 | Auto-close tab on exit | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 53 | Window title from shell | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 54 | App icon | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 55 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
+| 46 | Broadcast input to all tabs/panes | ✅ | ❌ | ✅ | ❌ | ❌ | — | Done |
+| 47 | Smart paste protection | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 48 | Keyboard shortcuts help (Cmd+/) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 49 | Welcome message | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 50 | Long command notification (>10s) | ✅ | ❌ | ✅ | ✅ | ❌ | — | Done |
+| 51 | Clear screen (Cmd+K) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
+| 52 | Headless mode (CLI) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
+| 53 | Auto-close tab on exit | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
+| 54 | Window title from shell | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
+| 55 | App icon | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
+| 56 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | | **PLANNED — NOT YET BUILT** | | | | | | | |
-| 56 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
-| 57 | Autocomplete from history | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 58 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 59 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium | Planned |
-| 60 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 61 | Session persistence / restore | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
-| 62 | Git status in tab title | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 63 | SSH tab status indicator | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
-| 64 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 65 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 66 | AI command assistant | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 67 | Clickable file paths | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
-| 68 | tmux integration | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 69 | Scriptable API / socket | ❌ | ✅ | ✅ | ❌ | ✅ | Low | Planned |
-| 70 | Regex output highlighting | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 71 | Terminal sharing (tmate-style) | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 72 | Clipboard history ring | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 73 | Environment variable viewer | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 74 | Sound themes | ❌ | ✅ | ✅ | ❌ | ❌ | Low | Planned |
-| 75 | Command bookmarks | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 76 | Quick file preview | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 77 | Timestamp mode | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 78 | Focus mode | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 79 | Auto-update checker | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
-| 80 | Password / Keychain integration | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 81 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
-| 82 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium | Planned |
-| 83 | Bell notification (visual/audio/badge) | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
-| 84 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
-| 85 | Drag & drop file path into terminal | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
-| 86 | Right-click context menu | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
-| 87 | Touch Bar support (MacBook Pro) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 88 | Marks / bookmarks in scrollback | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
-| 89 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 90 | Instant replay (rewind terminal output) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 91 | Coprocess / pipe output to script | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 92 | Password prompt detection & Keychain autofill | ❌ | ❌ | ❌ | ❌ | ❌ | Medium | Planned |
-| 93 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 94 | Configurable scrollback limit | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
-| 95 | Automatic profile switching (by host/command) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
-| 96 | Plugin / extension system | ❌ | ❌ | ✅ (Python) | ❌ | ❌ | Low | Planned |
-| 97 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 98 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 99 | Emoji picker in terminal | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 100 | Notification badge on tab | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
+| 57 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
+| 58 | Autocomplete from history | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 59 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
+| 60 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium | Planned |
+| 61 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
+| 62 | Session persistence / restore | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
+| 63 | Git status in tab title | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 64 | SSH tab status indicator | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
+| 65 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 66 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
+| 67 | AI command assistant | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
+| 68 | Clickable file paths | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
+| 69 | tmux integration | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 70 | Scriptable API / socket | ❌ | ✅ | ✅ | ❌ | ✅ | Low | Planned |
+| 71 | Regex output highlighting | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 72 | Terminal sharing (tmate-style) | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
+| 73 | Clipboard history ring | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 74 | Environment variable viewer | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
+| 75 | Sound themes | ❌ | ✅ | ✅ | ❌ | ❌ | Low | Planned |
+| 76 | Command bookmarks | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
+| 77 | Quick file preview | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
+| 78 | Timestamp mode | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
+| 79 | Focus mode | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
+| 80 | Auto-update checker | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
+| 81 | Password / Keychain integration | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
+| 82 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
+| 83 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium | Planned |
+| 84 | Bell notification (visual/audio/badge) | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
+| 85 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
+| 86 | Drag & drop file path into terminal | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
+| 87 | Right-click context menu | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
+| 88 | Touch Bar support (MacBook Pro) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 89 | Marks / bookmarks in scrollback | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
+| 90 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
+| 91 | Instant replay (rewind terminal output) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 92 | Coprocess / pipe output to script | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
+| 93 | Password prompt detection & Keychain autofill | ❌ | ❌ | ❌ | ❌ | ❌ | Medium | Planned |
+| 94 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
+| 95 | Configurable scrollback limit | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
+| 96 | Automatic profile switching (by host/command) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
+| 97 | Plugin / extension system | ❌ | ❌ | ✅ (Python) | ❌ | ❌ | Low | Planned |
+| 98 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 99 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 100 | Emoji picker in terminal | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
+| 101 | Notification badge on tab | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
 
 ## Summary
 
 | Terminal | Done (of 101) | Unique Features |
 |----------|--------------|-----------------|
-| **PTerminal** | **58** | SSH nested folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
+| **PTerminal** | **57** (55 done + 2 partial) | SSH nested folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
 | Terminal.app | 38 | Built into macOS |
 | iTerm2 | 62 | tmux, profiles, triggers, instant replay, plugin system |
 | Warp | 52 | AI assistant, command blocks, collaboration, multi-line editing |
