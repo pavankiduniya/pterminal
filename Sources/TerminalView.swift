@@ -180,6 +180,19 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         autoload -Uz add-zsh-hook 2>/dev/null
         add-zsh-hook preexec __pterminal_preexec 2>/dev/null
         add-zsh-hook precmd __pterminal_precmd 2>/dev/null
+
+        # Git branch in tab title
+        __pterminal_git_precmd() {
+            local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+            if [ -n "$branch" ]; then
+                local dirty=""
+                if [ -n "$(git status --porcelain 2>/dev/null)" ]; then dirty="*"; fi
+                echo "GIT:${branch}${dirty}" >> \(hookPath)
+            else
+                echo "GIT:" >> \(hookPath)
+            fi
+        }
+        add-zsh-hook precmd __pterminal_git_precmd 2>/dev/null
         """
         try? zshrc.write(toFile: zshDir + "/.zshrc", atomically: true, encoding: .utf8)
 
@@ -523,13 +536,23 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
                 DispatchQueue.main.async {
                     HistoryDB.shared.addCommand(cmd, tabName: nil, workingDir: nil, exitCode: exitCode, success: success)
 
-                    // Send notification if command took > 10s and app is not active
                     if elapsed >= 10 {
                         self.sendCompletionNotification(command: cmd, elapsed: elapsed, success: success, exitCode: exitCode)
                     }
                 }
                 lastCommand = nil
                 commandStartTime = nil
+            }
+        } else if line.hasPrefix("GIT:") {
+            let branch = String(line.dropFirst(4)).trimmingCharacters(in: .whitespacesAndNewlines)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, !self.terminalView.isInSSH else { return }
+                if branch.isEmpty {
+                    // Not in a git repo — let shell set the title
+                } else {
+                    let icon = branch.hasSuffix("*") ? "🔴" : "🟢"
+                    self.window?.title = "\(icon) \(branch) — PTerminal"
+                }
             }
         }
     }

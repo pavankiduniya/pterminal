@@ -72,7 +72,7 @@
 | 60 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium | Planned |
 | 61 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
 | 62 | Session persistence / restore | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
-| 63 | Git status in tab title | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
+| 63 | Git status in tab title | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
 | 64 | SSH tab status indicator | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
 | 65 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
 | 66 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
