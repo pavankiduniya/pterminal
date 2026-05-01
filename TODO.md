@@ -63,7 +63,7 @@
 | 52 | App icon | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | 53 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | | **PLANNED — NOT YET BUILT** | | | | | | | |
-| 54 | ~~Split panes (Cmd+D)~~ | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
+| 54 | Split panes (Cmd+D) | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
 | 55 | Settings/preferences window | ❌ | ✅ | ✅ | ✅ | ✅ | High | Planned |
 | 56 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
 | 57 | Autocomplete from history | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
