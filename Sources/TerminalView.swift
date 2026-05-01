@@ -112,27 +112,6 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         autoload -Uz add-zsh-hook 2>/dev/null
         add-zsh-hook preexec __pterminal_preexec 2>/dev/null
         add-zsh-hook precmd __pterminal_precmd 2>/dev/null
-
-        # PTerminal: History autocomplete
-        # Up arrow searches history matching what you've typed so far
-        autoload -Uz up-line-or-beginning-search down-line-or-beginning-search 2>/dev/null
-        zle -N up-line-or-beginning-search 2>/dev/null
-        zle -N down-line-or-beginning-search 2>/dev/null
-        bindkey "^[[A" up-line-or-beginning-search 2>/dev/null
-        bindkey "^[[B" down-line-or-beginning-search 2>/dev/null
-
-        # Tab: show completions, Shift+Tab: accept suggestion
-        # Enable menu-style completion
-        zstyle ':completion:*' menu select 2>/dev/null
-        # Enable partial completion (e.g. cd /u/l/b → cd /usr/local/bin)
-        zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*' 2>/dev/null
-
-        # Fish-style autosuggestions using zsh predict
-        autoload -Uz predict-on 2>/dev/null
-        zle -N predict-on 2>/dev/null
-        zle -N predict-off 2>/dev/null
-        # Ctrl+Space to toggle predict mode
-        bindkey "^@" predict-on 2>/dev/null
         """
         try? zshrc.write(toFile: zshDir + "/.zshrc", atomically: true, encoding: .utf8)
 

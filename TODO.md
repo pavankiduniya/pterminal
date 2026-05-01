@@ -67,7 +67,7 @@
 | 56 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
 | | **PLANNED — NOT YET BUILT** | | | | | | | |
 | 57 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
-| 58 | Autocomplete from history | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
+| 58 | Autocomplete from history (Cmd+E) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
 | 59 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
 | 60 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium | Planned |
 | 61 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |

@@ -98,6 +98,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let historyItem = NSMenuItem(title: "Show History", action: #selector(showHistoryAction), keyEquivalent: "h")
         historyItem.keyEquivalentModifierMask = [.command, .shift]
         shellMenu.addItem(historyItem)
+        let historySearchItem = NSMenuItem(title: "Search History...", action: #selector(showHistorySearch), keyEquivalent: "e")
+        shellMenu.addItem(historySearchItem)
         let exportMenu = NSMenu(title: "Export History")
         exportMenu.addItem(withTitle: "Export as CSV...", action: #selector(exportCSV), keyEquivalent: "")
         exportMenu.addItem(withTitle: "Export as JSON...", action: #selector(exportJSON), keyEquivalent: "")
@@ -277,6 +279,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc func showHistorySearch() {
+        let popup = HistorySearchPopup(relativeTo: NSApp.keyWindow) { command in
+            // Type the selected command into the active terminal
+            if let split = NSApp.keyWindow?.contentView as? SplitPaneView,
+               let terminal = split.activeTerminal {
+                terminal.terminalView.send(txt: command)
+                terminal.focus()
+            }
+        }
+        popup.makeKeyAndOrderFront(nil)
+    }
+
     @objc func exportCSV() {
         let panel = NSSavePanel()
         panel.title = "Export History as CSV"
@@ -391,6 +405,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             },
             .init(title: "Clear Screen", subtitle: "Clear terminal output", shortcut: "⌘K") { [weak self] in self?.clearScreen() },
             .init(title: "Show History", subtitle: "Show command history with timestamps", shortcut: "⇧⌘H") { [weak self] in self?.showHistoryAction() },
+            .init(title: "Search History", subtitle: "Search and pick from past commands", shortcut: "⌘E") { [weak self] in self?.showHistorySearch() },
             .init(title: "Keyboard Shortcuts", subtitle: "Show all keyboard shortcuts", shortcut: "⌘/") { [weak self] in self?.showHelp() },
             .init(title: "Zoom In", subtitle: "Increase font size", shortcut: "⌘+") { [weak self] in self?.zoomIn() },
             .init(title: "Zoom Out", subtitle: "Decrease font size", shortcut: "⌘-") { [weak self] in self?.zoomOut() },
