@@ -45,6 +45,7 @@
 | 36 | Per-connection theme | ✅ | ❌ | ✅ (profiles) | ❌ | ❌ | — | Done |
 | 37 | SSH key file browser | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
 | 38 | Edit/delete connections | ✅ | ❌ | ✅ | ❌ | ❌ | — | Done |
+| 39 | Nested SSH session folders (unlimited depth) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
 | | **HISTORY & RECORDING** | | | | | | | |
 | 39 | Command history in SQLite | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
 | 40 | History with success/fail (✓/✗) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
@@ -109,13 +110,12 @@
 | 97 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
 | 98 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
 | 99 | Notification badge on tab | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
-| 100 | Emoji picker in terminal | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
 
 ## Summary
 
 | Terminal | Done (of 100) | Unique Features |
 |----------|--------------|-----------------|
-| **PTerminal** | **57** | SSH folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
+| **PTerminal** | **58** | SSH nested folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
 | Terminal.app | 38 | Built into macOS |
 | iTerm2 | 62 | tmux, profiles, triggers, instant replay, plugin system |
 | Warp | 52 | AI assistant, command blocks, collaboration, multi-line editing |
