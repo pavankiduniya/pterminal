@@ -342,19 +342,98 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         guard let path = hookFile else { return }
         FileManager.default.createFile(atPath: path, contents: nil)
 
+        let actionFile = "/tmp/pterminal_action_\(ProcessInfo.processInfo.processIdentifier)"
+
         var lastOffset: UInt64 = 0
         pollTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            guard let data = FileManager.default.contents(atPath: path) else { return }
-            let currentSize = UInt64(data.count)
-            guard currentSize > lastOffset else { return }
 
-            let newData = data.subdata(in: Int(lastOffset)..<Int(currentSize))
-            lastOffset = currentSize
+            // Check hook file for command history
+            if let data = FileManager.default.contents(atPath: path) {
+                let currentSize = UInt64(data.count)
+                if currentSize > lastOffset {
+                    let newData = data.subdata(in: Int(lastOffset)..<Int(currentSize))
+                    lastOffset = currentSize
+                    if let str = String(data: newData, encoding: .utf8) {
+                        for line in str.components(separatedBy: "\n") {
+                            self.processHookLine(line)
+                        }
+                    }
+                }
+            }
 
-            if let str = String(data: newData, encoding: .utf8) {
-                for line in str.components(separatedBy: "\n") {
-                    self.processHookLine(line)
+            // Check action file for pcon folder commands
+            if let actionData = try? String(contentsOfFile: actionFile, encoding: .utf8),
+               !actionData.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                try? FileManager.default.removeItem(atPath: actionFile)
+                DispatchQueue.main.async {
+                    self.handlePconAction(actionData.trimmingCharacters(in: .whitespacesAndNewlines))
+                }
+            }
+        }
+    }
+
+    /// Handle pcon folder action: "FOLDER:t:Client/Canmove" or "FOLDER:s:Client/Canmove"
+    private func handlePconAction(_ action: String) {
+        guard action.hasPrefix("FOLDER:") else { return }
+        let parts = action.dropFirst(7).split(separator: ":", maxSplits: 1)
+        guard parts.count == 2 else { return }
+        let layout = String(parts[0])
+        let folderPath = String(parts[1])
+
+        // Get all connections in this folder
+        let connections = SSHManager.shared.getAll().filter { $0.folder == folderPath }
+        guard !connections.isEmpty else { return }
+
+        if let delegate = NSApp.delegate as? AppDelegate {
+            if layout == "s" {
+                // Split panes — open first, then split for each additional
+                for (i, conn) in connections.enumerated() {
+                    if i == 0 {
+                        // Use current pane
+                        let cmd = conn.sshCommand
+                        self.terminalView.send(txt: cmd + "\n")
+                        if conn.themeIndex < Themes.all.count {
+                            Themes.all[conn.themeIndex].apply(to: self.terminalView)
+                        }
+                    } else {
+                        // Split and connect
+                        if let split = self.window?.contentView as? SplitPaneView {
+                            split.splitVertical()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 1.0) {
+                                if let terminal = split.activeTerminal {
+                                    let cmd = conn.sshCommand
+                                    terminal.terminalView.send(txt: cmd + "\n")
+                                    if conn.themeIndex < Themes.all.count {
+                                        Themes.all[conn.themeIndex].apply(to: terminal.terminalView)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Tabs — open each in a new tab
+                for (i, conn) in connections.enumerated() {
+                    if i == 0 {
+                        let cmd = conn.sshCommand
+                        self.terminalView.send(txt: cmd + "\n")
+                        if conn.themeIndex < Themes.all.count {
+                            Themes.all[conn.themeIndex].apply(to: self.terminalView)
+                        }
+                    } else {
+                        delegate.createNewWindow(tabIn: self.window)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 1.0) {
+                            if let split = NSApp.keyWindow?.contentView as? SplitPaneView,
+                               let terminal = split.activeTerminal {
+                                let cmd = conn.sshCommand
+                                terminal.terminalView.send(txt: cmd + "\n")
+                                if conn.themeIndex < Themes.all.count {
+                                    Themes.all[conn.themeIndex].apply(to: terminal.terminalView)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -429,14 +508,18 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
     }
 
     private func writePconScript(to path: String, dbPath: String) {
+        let actionFile = "/tmp/pterminal_action_\(ProcessInfo.processInfo.processIdentifier)"
         var s = "#!/bin/bash\n"
         s += "DB=\"\(dbPath)\"\n"
+        s += "ACTION_FILE=\"\(actionFile)\"\n"
         s += "if [ ! -f \"$DB\" ]; then echo \"No saved sessions.\"; exit 1; fi\n"
         s += "G=$'\\e[32m'; Y=$'\\e[33m'; C=$'\\e[36m'; D=$'\\e[90m'; R=$'\\e[0m'; RD=$'\\e[31m'; B=$'\\e[1m'\n"
         s += "printf \"\\n${B}${G}📡 PTerminal - Saved Sessions${R}\\n\"\n"
         s += "printf \"${D}─────────────────────────────────────────────────${R}\\n\\n\"\n"
         s += "CONNECTIONS=$(sqlite3 \"$DB\" \"SELECT id, folder, name, username, host, port, identity_file FROM ssh_connections ORDER BY folder, name;\" 2>/dev/null)\n"
         s += "if [ -z \"$CONNECTIONS\" ]; then printf \"  No saved sessions. Use ${C}Cmd+Shift+S${R} to add one.\\n\\n\"; exit 0; fi\n"
+        // Collect unique folders
+        s += "FOLDERS=($(sqlite3 \"$DB\" \"SELECT DISTINCT folder FROM ssh_connections WHERE folder != '' ORDER BY folder;\" 2>/dev/null))\n"
         s += "LAST_FOLDER=\"\"; INDEX=0\n"
         s += "declare -a IDS; declare -a CMDS; declare -a NAMES\n"
         s += "while IFS='|' read -r id folder name user host port keyfile; do\n"
@@ -455,10 +538,34 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         s += "  if [ -n \"$folder\" ]; then IFS='/' read -ra PARTS <<< \"$folder\"; for part in \"${PARTS[@]}\"; do INDENT=\"${INDENT}  \"; done; fi\n"
         s += "  printf \"  ${INDENT}${C}[${INDEX}]${R} ${name}  ${D}— ${user}@${host}${R}\\n\"\n"
         s += "done <<< \"$CONNECTIONS\"\n"
-        s += "printf \"\\n${G}Select [1-${INDEX}] or q to cancel: ${R}\"\n"
+        // Show folder options
+        s += "FCOUNT=${#FOLDERS[@]}\n"
+        s += "if [ $FCOUNT -gt 0 ]; then\n"
+        s += "  printf \"\\n${D}─────────────────────────────────────────────────${R}\\n\"\n"
+        s += "  printf \"${Y}📁 Open entire folder:${R}\\n\"\n"
+        s += "  for i in $(seq 0 $((FCOUNT-1))); do\n"
+        s += "    CNT=$(sqlite3 \"$DB\" \"SELECT COUNT(*) FROM ssh_connections WHERE folder='${FOLDERS[$i]}';\" 2>/dev/null)\n"
+        s += "    printf \"  ${Y}[f$((i+1))]${R} ${FOLDERS[$i]}  ${D}— ${CNT} server(s)${R}\\n\"\n"
+        s += "  done\n"
+        s += "fi\n"
+        // Prompt
+        s += "printf \"\\n${G}Select [1-${INDEX}], [f1-f${FCOUNT}] for folder, or q: ${R}\"\n"
         s += "read -r CHOICE\n"
         s += "if [ \"$CHOICE\" = \"q\" ] || [ \"$CHOICE\" = \"Q\" ] || [ -z \"$CHOICE\" ]; then exit 0; fi\n"
-        s += "if [ \"$CHOICE\" -ge 1 ] 2>/dev/null && [ \"$CHOICE\" -le \"$INDEX\" ] 2>/dev/null; then\n"
+        // Folder selection — ask layout then write action file for the app
+        s += "if [[ \"$CHOICE\" =~ ^f([0-9]+)$ ]]; then\n"
+        s += "  FI=$((${BASH_REMATCH[1]} - 1))\n"
+        s += "  if [ $FI -ge 0 ] && [ $FI -lt $FCOUNT ]; then\n"
+        s += "    FOLDER_PATH=\"${FOLDERS[$FI]}\"\n"
+        s += "    printf \"\\n${C}  [t]${R} Open in separate ${B}tabs${R}\\n\"\n"
+        s += "    printf \"${C}  [s]${R} Open in ${B}split panes${R}\\n\"\n"
+        s += "    printf \"\\n${G}Layout [t/s]: ${R}\"\n"
+        s += "    read -r LAYOUT\n"
+        s += "    echo \"FOLDER:${LAYOUT}:${FOLDER_PATH}\" > \"$ACTION_FILE\"\n"
+        s += "    printf \"\\n${G}✓ Opening ${FOLDER_PATH} servers...${R}\\n\\n\"\n"
+        s += "  else printf \"${RD}Invalid folder.${R}\\n\"; fi\n"
+        // Single server selection
+        s += "elif [ \"$CHOICE\" -ge 1 ] 2>/dev/null && [ \"$CHOICE\" -le \"$INDEX\" ] 2>/dev/null; then\n"
         s += "  printf \"\\n${G}→ Connecting: ${NAMES[$CHOICE]}${R}\\n\\n\"\n"
         s += "  sqlite3 \"$DB\" \"UPDATE ssh_connections SET last_used=$(date +%s) WHERE id=${IDS[$CHOICE]};\" 2>/dev/null\n"
         s += "  eval \"${CMDS[$CHOICE]}\"\n"
