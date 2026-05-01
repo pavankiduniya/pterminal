@@ -95,8 +95,8 @@
 | 83 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium | Planned |
 | 84 | Bell notification (visual/audio/badge) | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
 | 85 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
-| 86 | Drag & drop file path into terminal | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
-| 87 | Right-click context menu | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
+| 86 | Drag & drop file path into terminal | ✅ | ✅ | ✅ | ✅ | ❌ | — | Done |
+| 87 | Right-click context menu | ✅ | ✅ | ✅ | ✅ | ❌ | — | Done |
 | 88 | Touch Bar support (MacBook Pro) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
 | 89 | Marks / bookmarks in scrollback | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
 | 90 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |

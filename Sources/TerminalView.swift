@@ -39,6 +39,57 @@ class RecordableTerminalView: LocalProcessTerminalView {
         }
         super.paste(sender as Any)
     }
+
+    // MARK: - Right-click context menu
+
+    override func menu(for event: NSEvent) -> NSMenu? {
+        let menu = NSMenu()
+        menu.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "")
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "Clear Screen", action: #selector(clearFromMenu), keyEquivalent: "")
+        menu.addItem(withTitle: "Find...", action: #selector(showFindFromMenu), keyEquivalent: "")
+        menu.addItem(.separator())
+        let splitMenu = NSMenu()
+        splitMenu.addItem(withTitle: "Split Vertically", action: #selector(splitVFromMenu), keyEquivalent: "")
+        splitMenu.addItem(withTitle: "Split Horizontally", action: #selector(splitHFromMenu), keyEquivalent: "")
+        let splitItem = NSMenuItem(title: "Split Pane", action: nil, keyEquivalent: "")
+        splitItem.submenu = splitMenu
+        menu.addItem(splitItem)
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "SSH Quick Connect...", action: #selector(sshFromMenu), keyEquivalent: "")
+        menu.addItem(withTitle: "New Tab", action: #selector(newTabFromMenu), keyEquivalent: "")
+        return menu
+    }
+
+    @objc private func clearFromMenu() { send(txt: "\u{0C}") }
+    @objc private func showFindFromMenu() {
+        let item = NSMenuItem(); item.tag = Int(NSFindPanelAction.showFindPanel.rawValue)
+        performFindPanelAction(item)
+    }
+    @objc private func splitVFromMenu() { (window?.contentView as? SplitPaneView)?.splitVertical() }
+    @objc private func splitHFromMenu() { (window?.contentView as? SplitPaneView)?.splitHorizontal() }
+    @objc private func sshFromMenu() { (NSApp.delegate as? AppDelegate)?.sshQuickConnect() }
+    @objc private func newTabFromMenu() { (NSApp.delegate as? AppDelegate)?.newTab() }
+
+    // MARK: - Drag & drop file paths from Finder
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        if sender.draggingPasteboard.canReadObject(forClasses: [NSURL.self], options: nil) {
+            return .copy
+        }
+        return super.draggingEntered(sender)
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        if let urls = sender.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
+            let paths = urls.map { $0.path.contains(" ") ? "'\($0.path)'" : $0.path }
+            send(txt: paths.joined(separator: " "))
+            return true
+        }
+        return super.performDragOperation(sender)
+    }
 }
 
 class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
@@ -68,6 +119,7 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         terminalView.processDelegate = self
         terminalView.recorder = recorder
         terminalView.parentView = self
+        terminalView.registerForDraggedTypes([.fileURL])
 
         addSubview(terminalView)
 
