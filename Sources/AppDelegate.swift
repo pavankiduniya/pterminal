@@ -628,51 +628,64 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert.addButton(withTitle: "Save")
         alert.addButton(withTitle: "Cancel")
 
-        let container = NSView(frame: NSRect(x: 0, y: 0, width: 350, height: 130))
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 350, height: 230))
 
         let nameLabel = NSTextField(labelWithString: "Name:")
-        nameLabel.frame = NSRect(x: 0, y: 100, width: 70, height: 20)
+        nameLabel.frame = NSRect(x: 0, y: 200, width: 70, height: 20)
         container.addSubview(nameLabel)
-        let nameField = NSTextField(frame: NSRect(x: 75, y: 98, width: 270, height: 24))
+        let nameField = NSTextField(frame: NSRect(x: 75, y: 198, width: 270, height: 24))
         nameField.placeholderString = "My Server"
         container.addSubview(nameField)
 
+        let folderLabel = NSTextField(labelWithString: "Folder:")
+        folderLabel.frame = NSRect(x: 0, y: 168, width: 70, height: 20)
+        container.addSubview(folderLabel)
+        let folderField = NSTextField(frame: NSRect(x: 75, y: 166, width: 270, height: 24))
+        folderField.placeholderString = "e.g. Clients/Canmove (use / for nesting)"
+        container.addSubview(folderField)
+
         let hostLabel = NSTextField(labelWithString: "Host:")
-        hostLabel.frame = NSRect(x: 0, y: 68, width: 70, height: 20)
+        hostLabel.frame = NSRect(x: 0, y: 136, width: 70, height: 20)
         container.addSubview(hostLabel)
-        let hostField = NSTextField(frame: NSRect(x: 75, y: 66, width: 270, height: 24))
+        let hostField = NSTextField(frame: NSRect(x: 75, y: 134, width: 270, height: 24))
         hostField.placeholderString = "hostname or IP"
         container.addSubview(hostField)
 
         let userLabel = NSTextField(labelWithString: "User:")
-        userLabel.frame = NSRect(x: 0, y: 36, width: 70, height: 20)
+        userLabel.frame = NSRect(x: 0, y: 104, width: 70, height: 20)
         container.addSubview(userLabel)
-        let userField = NSTextField(frame: NSRect(x: 75, y: 34, width: 150, height: 24))
+        let userField = NSTextField(frame: NSRect(x: 75, y: 102, width: 150, height: 24))
         userField.placeholderString = "username"
-        userField.stringValue = ProcessInfo.processInfo.environment["USER"] ?? ""
+        userField.stringValue = "root"
         container.addSubview(userField)
 
         let portLabel = NSTextField(labelWithString: "Port:")
-        portLabel.frame = NSRect(x: 230, y: 36, width: 40, height: 20)
+        portLabel.frame = NSRect(x: 230, y: 104, width: 40, height: 20)
         container.addSubview(portLabel)
-        let portField = NSTextField(frame: NSRect(x: 275, y: 34, width: 70, height: 24))
+        let portField = NSTextField(frame: NSRect(x: 275, y: 102, width: 70, height: 24))
         portField.stringValue = "22"
         container.addSubview(portField)
 
         let keyLabel = NSTextField(labelWithString: "Key:")
-        keyLabel.frame = NSRect(x: 0, y: 4, width: 70, height: 20)
+        keyLabel.frame = NSRect(x: 0, y: 72, width: 70, height: 20)
         container.addSubview(keyLabel)
-        let keyField = NSTextField(frame: NSRect(x: 75, y: 2, width: 220, height: 24))
+        let keyField = NSTextField(frame: NSRect(x: 75, y: 70, width: 220, height: 24))
         keyField.placeholderString = "~/.ssh/id_rsa (optional)"
         container.addSubview(keyField)
 
-        let browseBtn = NSButton(frame: NSRect(x: 300, y: 1, width: 45, height: 24))
+        let browseBtn = NSButton(frame: NSRect(x: 300, y: 69, width: 45, height: 24))
         browseBtn.title = "..."
         browseBtn.bezelStyle = .rounded
         browseBtn.target = self
         browseBtn.action = #selector(browseKeyFile(_:))
-        browseBtn.tag = 999
         container.addSubview(browseBtn)
+
+        let themeLabel = NSTextField(labelWithString: "Theme:")
+        themeLabel.frame = NSRect(x: 0, y: 40, width: 70, height: 20)
+        container.addSubview(themeLabel)
+        let themePopup = NSPopUpButton(frame: NSRect(x: 75, y: 38, width: 270, height: 24))
+        for theme in Themes.all { themePopup.addItem(withTitle: theme.name) }
+        container.addSubview(themePopup)
 
         alert.accessoryView = container
         alert.window.initialFirstResponder = nameField
@@ -688,7 +701,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         guard !name.isEmpty, !host.isEmpty, !user.isEmpty else { return }
 
-        SSHManager.shared.save(name: name, host: host, port: port, username: user, identityFile: key.isEmpty ? nil : key)
+        SSHManager.shared.save(name: name, host: host, port: port, username: user, identityFile: key.isEmpty ? nil : key, themeIndex: themePopup.indexOfSelectedItem, folder: folderField.stringValue.trimmingCharacters(in: .whitespaces))
         refreshSavedSessionsMenu()
     }
 
