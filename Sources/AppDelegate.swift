@@ -705,33 +705,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             emptyItem.isEnabled = false
             submenu.addItem(emptyItem)
         } else {
-            // Group by folder
-            var folders: [String: [SSHConnection]] = [:]
             var noFolder: [SSHConnection] = []
+
+            // Build nested menu tree
             for conn in connections {
                 if conn.folder.isEmpty {
                     noFolder.append(conn)
                 } else {
-                    folders[conn.folder, default: []].append(conn)
-                }
-            }
-
-            // Add folder submenus
-            for folderName in folders.keys.sorted() {
-                let folderMenu = NSMenu(title: folderName)
-                for conn in folders[folderName]! {
+                    // Split folder path by /
+                    let parts = conn.folder.split(separator: "/").map { String($0).trimmingCharacters(in: .whitespaces) }
+                    let targetMenu = getOrCreateNestedMenu(in: submenu, path: parts)
                     let title = "\(conn.name)  —  \(conn.username)@\(conn.host)"
                     let item = NSMenuItem(title: title, action: #selector(connectSavedSession(_:)), keyEquivalent: "")
                     item.tag = conn.id
-                    folderMenu.addItem(item)
+                    targetMenu.addItem(item)
                 }
-                let folderItem = NSMenuItem(title: "📁 \(folderName)", action: nil, keyEquivalent: "")
-                folderItem.submenu = folderMenu
-                submenu.addItem(folderItem)
             }
 
             // Add ungrouped connections
-            if !noFolder.isEmpty && !folders.isEmpty {
+            if !noFolder.isEmpty && submenu.items.count > 0 {
                 submenu.addItem(.separator())
             }
             for (i, conn) in noFolder.enumerated() {
@@ -747,6 +739,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
             submenu.addItem(.separator())
             submenu.addItem(withTitle: "Manage Connections...", action: #selector(manageConnections), keyEquivalent: "")
+        }
+    }
+
+    /// Recursively get or create nested submenus for a folder path like ["Clients", "Canmove", "dev"]
+    private func getOrCreateNestedMenu(in parentMenu: NSMenu, path: [String]) -> NSMenu {
+        guard let first = path.first else { return parentMenu }
+
+        // Check if submenu already exists
+        for item in parentMenu.items {
+            if item.title == "📁 \(first)", let existing = item.submenu {
+                if path.count == 1 {
+                    return existing
+                } else {
+                    return getOrCreateNestedMenu(in: existing, path: Array(path.dropFirst()))
+                }
+            }
+        }
+
+        // Create new submenu
+        let newMenu = NSMenu(title: first)
+        let menuItem = NSMenuItem(title: "📁 \(first)", action: nil, keyEquivalent: "")
+        menuItem.submenu = newMenu
+        parentMenu.addItem(menuItem)
+
+        if path.count == 1 {
+            return newMenu
+        } else {
+            return getOrCreateNestedMenu(in: newMenu, path: Array(path.dropFirst()))
         }
     }
 
