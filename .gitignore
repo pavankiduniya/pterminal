@@ -1,0 +1,11 @@
+.build/
+.swiftpm/
+*.xcodeproj/
+xcuserdata/
+DerivedData/
+*.app
+*.dmg
+dmg_temp/
+/tmp/
+*.ips
+.DS_Store
