@@ -1,4 +1,4 @@
-# PTerminal - Feature Comparison & Roadmap
+# PTerminal v0.9.0 - Feature Comparison & Roadmap
 
 | # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Priority | Status |
 |---|---------|-----------|-------------|--------|------|---------|----------|--------|
