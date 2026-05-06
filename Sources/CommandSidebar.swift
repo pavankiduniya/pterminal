@@ -1,35 +1,78 @@
 import AppKit
 
-/// Right sidebar panel showing searchable command list from history
+/// Right sidebar panel showing shortcuts and command history
 class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate {
     private let searchField = NSTextField()
     private let tableView = NSTableView()
-    private var allCommands: [String] = []
-    private var filtered: [String] = []
+    private let segmentControl = NSSegmentedControl()
+    private var shortcuts: [(name: String, key: String)] = []
+    private var historyCommands: [String] = []
+    private var filtered: [(name: String, key: String)] = []
+    private var showingShortcuts = true
     weak var terminalView: RecordableTerminalView?
 
     override init(frame: NSRect) {
         super.init(frame: frame)
         wantsLayer = true
         layer?.backgroundColor = NSColor(white: 0.08, alpha: 1).cgColor
+        buildShortcuts()
         setupUI()
-        loadCommands()
+        filtered = shortcuts
     }
 
     required init?(coder: NSCoder) { fatalError() }
 
+    private func buildShortcuts() {
+        shortcuts = [
+            ("New Tab", "⌘T"),
+            ("New Window", "⌘N"),
+            ("Close Tab", "⌘W"),
+            ("Split Vertical", "⌘D"),
+            ("Split Horizontal", "⇧⌘D"),
+            ("Close Pane", "⌥⌘W"),
+            ("Rename Tab", "⇧⌘R"),
+            ("", ""),
+            ("Find", "⌘F"),
+            ("Find Next", "⌘G"),
+            ("Command Palette", "⌘P"),
+            ("History Search", "⌘E"),
+            ("Clear Screen", "⌘K"),
+            ("", ""),
+            ("Zoom In", "⌘+"),
+            ("Zoom Out", "⌘-"),
+            ("Reset Zoom", "⌘0"),
+            ("Transparency", "⇧⌘U"),
+            ("Preferences", "⌘,"),
+            ("", ""),
+            ("SSH Connect", "⇧⌘S"),
+            ("Show History", "⇧⌘H"),
+            ("Broadcast", "⇧⌘B"),
+            ("Record Session", "⌥⌘R"),
+            ("Command Sidebar", "⌥⌘B"),
+            ("All Shortcuts", "⌘/"),
+            ("Quit", "⌘Q"),
+            ("", ""),
+            ("pcon", "SSH picker"),
+            ("phistory", "History CLI"),
+            ("phelp", "Help CLI"),
+        ]
+    }
+
     private func setupUI() {
-        // Header
-        let header = NSTextField(labelWithString: "📋 Commands")
-        header.frame = NSRect(x: 8, y: bounds.height - 28, width: bounds.width - 16, height: 20)
-        header.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
-        header.textColor = .white
-        header.autoresizingMask = [.width, .minYMargin]
-        addSubview(header)
+        // Segment control (Shortcuts / History)
+        segmentControl.segmentCount = 2
+        segmentControl.setLabel("Shortcuts", forSegment: 0)
+        segmentControl.setLabel("History", forSegment: 1)
+        segmentControl.selectedSegment = 0
+        segmentControl.frame = NSRect(x: 8, y: bounds.height - 30, width: bounds.width - 16, height: 22)
+        segmentControl.autoresizingMask = [.width, .minYMargin]
+        segmentControl.target = self
+        segmentControl.action = #selector(segmentChanged)
+        addSubview(segmentControl)
 
         // Search field
         searchField.frame = NSRect(x: 8, y: bounds.height - 56, width: bounds.width - 16, height: 24)
-        searchField.placeholderString = "Search commands..."
+        searchField.placeholderString = "Search..."
         searchField.font = NSFont.systemFont(ofSize: 11)
         searchField.backgroundColor = NSColor(white: 0.15, alpha: 1)
         searchField.textColor = .white
@@ -45,12 +88,11 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
         tableView.addTableColumn(column)
         tableView.headerView = nil
         tableView.backgroundColor = .clear
-        tableView.rowHeight = 26
+        tableView.rowHeight = 22
         tableView.delegate = self
         tableView.dataSource = self
         tableView.target = self
         tableView.doubleAction = #selector(rowDoubleClicked)
-        tableView.selectionHighlightStyle = .regular
 
         let scrollView = NSScrollView(frame: NSRect(x: 4, y: 4, width: bounds.width - 8, height: bounds.height - 64))
         scrollView.documentView = tableView
@@ -62,17 +104,30 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
     }
 
     func loadCommands() {
-        // Get unique commands from history, most used first
-        let entries = HistoryDB.shared.recent(limit: 1000)
-        var commandCounts: [String: Int] = [:]
+        let entries = HistoryDB.shared.recent(limit: 500)
+        var seen = Set<String>()
+        historyCommands = []
         for entry in entries {
             let cmd = entry.command.trimmingCharacters(in: .whitespaces)
-            if !cmd.isEmpty {
-                commandCounts[cmd, default: 0] += 1
+            if !cmd.isEmpty && !seen.contains(cmd) {
+                seen.insert(cmd)
+                historyCommands.append(cmd)
             }
         }
-        allCommands = commandCounts.sorted { $0.value > $1.value }.map { $0.key }
-        filtered = allCommands
+        if !showingShortcuts {
+            filtered = historyCommands.map { ($0, "") }
+            tableView.reloadData()
+        }
+    }
+
+    @objc private func segmentChanged() {
+        showingShortcuts = segmentControl.selectedSegment == 0
+        searchField.stringValue = ""
+        if showingShortcuts {
+            filtered = shortcuts
+        } else {
+            filtered = historyCommands.map { ($0, "") }
+        }
         tableView.reloadData()
     }
 
@@ -80,10 +135,11 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
 
     func controlTextDidChange(_ obj: Notification) {
         let query = searchField.stringValue.lowercased()
+        let source = showingShortcuts ? shortcuts : historyCommands.map { ($0, "") }
         if query.isEmpty {
-            filtered = allCommands
+            filtered = source
         } else {
-            filtered = allCommands.filter { $0.lowercased().contains(query) }
+            filtered = source.filter { $0.name.lowercased().contains(query) || $0.key.lowercased().contains(query) }
         }
         tableView.reloadData()
     }
@@ -93,15 +149,33 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
     func numberOfRows(in tableView: NSTableView) -> Int { filtered.count }
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let cmd = filtered[row]
-        let cell = NSView(frame: NSRect(x: 0, y: 0, width: tableView.frame.width, height: 26))
+        let item = filtered[row]
+        let cell = NSView(frame: NSRect(x: 0, y: 0, width: tableView.frame.width, height: 22))
 
-        let label = NSTextField(labelWithString: cmd)
-        label.frame = NSRect(x: 6, y: 3, width: tableView.frame.width - 12, height: 20)
-        label.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        if item.name.isEmpty {
+            // Separator
+            let sep = NSView(frame: NSRect(x: 8, y: 10, width: tableView.frame.width - 16, height: 1))
+            sep.wantsLayer = true
+            sep.layer?.backgroundColor = NSColor(white: 0.2, alpha: 1).cgColor
+            cell.addSubview(sep)
+            return cell
+        }
+
+        let label = NSTextField(labelWithString: item.name)
+        label.frame = NSRect(x: 6, y: 1, width: tableView.frame.width - 70, height: 18)
+        label.font = NSFont.systemFont(ofSize: 11)
         label.textColor = .white
         label.lineBreakMode = .byTruncatingTail
         cell.addSubview(label)
+
+        if !item.key.isEmpty {
+            let keyLabel = NSTextField(labelWithString: item.key)
+            keyLabel.frame = NSRect(x: tableView.frame.width - 68, y: 1, width: 60, height: 18)
+            keyLabel.font = NSFont.systemFont(ofSize: 10)
+            keyLabel.textColor = NSColor(white: 0.5, alpha: 1)
+            keyLabel.alignment = .right
+            cell.addSubview(keyLabel)
+        }
 
         return cell
     }
@@ -109,15 +183,15 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
     @objc private func rowDoubleClicked() {
         let row = tableView.selectedRow
         guard row >= 0, row < filtered.count else { return }
-        terminalView?.send(txt: filtered[row])
-        // Refocus terminal
-        if let window = terminalView?.window {
-            window.makeFirstResponder(terminalView)
-        }
-    }
+        let item = filtered[row]
+        guard !item.name.isEmpty else { return }
 
-    // Single click to insert
-    func tableViewSelectionDidChange(_ notification: Notification) {
-        // Only insert on explicit click, not programmatic selection
+        if !showingShortcuts {
+            // History — type the command
+            terminalView?.send(txt: item.name)
+            if let window = terminalView?.window {
+                window.makeFirstResponder(terminalView)
+            }
+        }
     }
 }
