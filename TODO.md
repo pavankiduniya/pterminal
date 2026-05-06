@@ -94,43 +94,35 @@
 
 | # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Priority |
 |---|---------|:---------:|:-----------:|:------:|:----:|:-------:|----------|
-| 72 | ~~Inline autocomplete as you type~~ | ❌ | ❌ | ❌ | ✅ | ❌ | — |
-
-## ❌ Won't Implement (Architecture Limitation)
-
-| Feature | Reason | Who has it |
-|---------|--------|-----------|
-| Inline autocomplete / intellisense as you type | Requires Warp-style custom input editor (breaks real PTY). We use Cmd+E history search instead. | Warp only |
-| Command blocks / output grouping | Requires custom rendering engine, not compatible with standard terminal emulation | Warp only |
-| 73 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
-| 74 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium |
-| 75 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
-| 76 | Session persistence / restore on relaunch | ❌ | ✅ | ✅ | ✅ | ❌ | Medium |
-| 77 | SSH tab status indicator (connected/disconnected) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
-| 78 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
-| 79 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
-| 80 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
-| 81 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium |
-| 82 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
-| 83 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
-| 84 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
-| 85 | Automatic profile switching by host | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
-| 86 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
-| 87 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
-| 88 | Password prompt detection + Keychain | ❌ | ❌ | ❌ | ❌ | ❌ | Medium |
-| 89 | AI command assistant | ❌ | ❌ | ❌ | ✅ | ❌ | Low |
-| 90 | Clickable file paths in output | ❌ | ❌ | ✅ | ✅ | ❌ | Low |
-| 91 | tmux integration | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
-| 92 | Scriptable API / socket control | ❌ | ✅ | ✅ | ❌ | ✅ | Low |
-| 93 | Regex-based output highlighting | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
-| 94 | Terminal sharing (tmate-style) | ❌ | ❌ | ❌ | ✅ | ❌ | Low |
-| 95 | Clipboard history ring | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
-| 96 | Sound themes (bell/complete/error) | ❌ | ✅ | ✅ | ❌ | ❌ | Low |
-| 97 | Instant replay (rewind output) | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
-| 98 | Plugin / extension system | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
-| 99 | Auto-update checker | ❌ | ✅ | ✅ | ✅ | ✅ | Low |
-| 100 | Configurable scrollback limit | ❌ | ✅ | ✅ | ✅ | ✅ | Low |
-| 101 | Touch Bar support | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 72 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 73 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium |
+| 74 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 75 | Session persistence / restore on relaunch | ❌ | ✅ | ✅ | ✅ | ❌ | Medium |
+| 76 | SSH tab status indicator (connected/disconnected) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
+| 77 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 78 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 79 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
+| 80 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium |
+| 81 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
+| 82 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 83 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 84 | Automatic profile switching by host | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
+| 85 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 86 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 87 | Password prompt detection + Keychain | ❌ | ❌ | ❌ | ❌ | ❌ | Medium |
+| 88 | AI command assistant | ❌ | ❌ | ❌ | ✅ | ❌ | Low |
+| 89 | Clickable file paths in output | ❌ | ❌ | ✅ | ✅ | ❌ | Low |
+| 90 | tmux integration | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 91 | Scriptable API / socket control | ❌ | ✅ | ✅ | ❌ | ✅ | Low |
+| 92 | Regex-based output highlighting | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 93 | Terminal sharing (tmate-style) | ❌ | ❌ | ❌ | ✅ | ❌ | Low |
+| 94 | Clipboard history ring | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 95 | Sound themes (bell/complete/error) | ❌ | ✅ | ✅ | ❌ | ❌ | Low |
+| 96 | Instant replay (rewind output) | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 97 | Plugin / extension system | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 98 | Auto-update checker | ❌ | ✅ | ✅ | ✅ | ✅ | Low |
+| 99 | Configurable scrollback limit | ❌ | ✅ | ✅ | ✅ | ✅ | Low |
+| 100 | Touch Bar support | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
 
 ## Summary
 
@@ -145,3 +137,11 @@
 ---
 
 *3,791 lines of Swift • 16 source files • MIT License*
+
+## ❌ Won't Implement (Architecture Limitation)
+
+| Feature | Reason | Who has it |
+|---------|--------|-----------|
+| Inline autocomplete / intellisense as you type | Requires Warp-style custom input editor (breaks real PTY). We use Cmd+E history search instead. | Warp only |
+| Command blocks / output grouping | Requires custom rendering engine, not compatible with standard terminal emulation | Warp only |
+| Multi-line command editing | Requires custom input editor separate from PTY | Warp only |
