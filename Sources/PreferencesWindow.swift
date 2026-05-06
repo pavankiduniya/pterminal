@@ -195,16 +195,6 @@ class PreferencesWindow: NSWindow {
 
         y -= 40
 
-        // Startup command
-        addLabel("Startup Command:", x: 30, y: y, to: view)
-        let startupField = NSTextField(frame: NSRect(x: 150, y: y - 2, width: 250, height: 24))
-        startupField.stringValue = UserDefaults.standard.string(forKey: "startupCommand") ?? ""
-        startupField.placeholderString = "e.g. cd ~/projects"
-        startupField.tag = 521
-        view.addSubview(startupField)
-
-        y -= 40
-
         // Environment variables
         addLabel("Extra Env Vars:", x: 30, y: y, to: view)
         let envField = NSTextField(frame: NSRect(x: 150, y: y - 2, width: 250, height: 24))
@@ -326,9 +316,6 @@ class PreferencesWindow: NSWindow {
     @objc private func saveShell(_ sender: NSButton) {
         if let field = sender.superview?.viewWithTag(520) as? NSTextField {
             UserDefaults.standard.set(field.stringValue, forKey: "defaultShell")
-        }
-        if let field = sender.superview?.viewWithTag(521) as? NSTextField {
-            UserDefaults.standard.set(field.stringValue, forKey: "startupCommand")
         }
         if let field = sender.superview?.viewWithTag(522) as? NSTextField {
             UserDefaults.standard.set(field.stringValue, forKey: "extraEnvVars")
