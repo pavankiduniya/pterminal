@@ -303,8 +303,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func showHistoryAction() {
-        if let view = NSApp.keyWindow?.contentView as? PTerminalView {
-            view.showHistory()
+        if let split = NSApp.keyWindow?.contentView as? SplitPaneView,
+           let terminal = split.activeTerminal {
+            terminal.showHistory()
         }
     }
 

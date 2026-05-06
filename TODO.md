@@ -1,123 +1,140 @@
-# PTerminal v0.10.0 - Feature Comparison & Roadmap
+# PTerminal v0.10.0 — Feature Comparison & Roadmap
 
-| # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Priority | Status |
-|---|---------|-----------|-------------|--------|------|---------|----------|--------|
-| | **TERMINAL ENGINE** | | | | | | | |
-| 1 | VT100/Xterm emulation | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 2 | Unicode / Emoji rendering | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 3 | ANSI colors (16/256/TrueColor) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 4 | Text attributes (bold/italic/underline/dim) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 5 | Mouse events | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 6 | Terminal resize (SIGWINCH) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 7 | Text selection | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 8 | Scrollback buffer | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 9 | Alternate screen (top/vim/htop) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 10 | Clickable hyperlinks (OSC 8) | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
-| 11 | Sixel graphics | ✅ | ❌ | ✅ | ❌ | ✅ | — | Done |
-| 12 | iTerm2 inline images | ✅ | ❌ | ✅ | ✅ | ❌ | — | Done |
-| 13 | Kitty graphics protocol | ✅ | ❌ | ❌ | ❌ | ✅ | — | Done |
-| 14 | CoreText rendering | ✅ | ✅ | ✅ | ❌ | ❌ | — | Done |
-| 15 | Metal GPU rendering | ⏳ | ❌ | ✅ | ✅ | ✅ | Low | Partial |
-| 16 | Multi-language input (CJK/IME) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 17 | Open URL on click/hover | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
-| | **TABS & WINDOWS** | | | | | | | |
-| 18 | Native macOS tabs | ✅ | ✅ | ❌ (custom) | ❌ (custom) | ✅ | — | Done |
-| 19 | New tab (Cmd+T) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 20 | New window (Cmd+N) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 21 | Close tab (Cmd+W) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 22 | Rename tab | ✅ | ❌ | ✅ | ✅ | ❌ | — | Done |
-| 23 | Split panes (Cmd+D / Cmd+Shift+D) | ✅ | ❌ | ✅ | ✅ | ✅ | — | Done |
-| | **APPEARANCE** | | | | | | | |
-| 24 | Color themes (13 built-in) | ✅ | ✅ (10) | ✅ (many) | ✅ | ✅ | — | Done |
-| 25 | Environment themes (Dev/Stage/Prod) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 26 | Theme persistence | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 27 | Font zoom (Cmd+/−/0) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 28 | Window transparency | ✅ | ✅ | ✅ | ❌ | ❌ | — | Done |
-| 29 | Settings/preferences window (Cmd+,) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| | **SEARCH & NAVIGATION** | | | | | | | |
-| 30 | Find bar (Cmd+F) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 31 | Find Next/Previous | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 32 | Command palette (Cmd+P) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| | **SSH MANAGEMENT** | | | | | | | |
-| 33 | SSH Quick Connect dialog | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 34 | Saved SSH sessions | ✅ | ❌ | ✅ (profiles) | ❌ | ❌ | — | Done |
-| 35 | SSH sessions in folders | ✅ | ❌ | ✅ (profiles) | ❌ | ❌ | — | Done |
-| 36 | Per-connection theme | ✅ | ❌ | ✅ (profiles) | ❌ | ❌ | — | Done |
-| 37 | SSH key file browser | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 38 | Edit/delete connections | ✅ | ❌ | ✅ | ❌ | ❌ | — | Done |
-| 39 | Nested SSH session folders (unlimited depth) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| | **HISTORY & RECORDING** | | | | | | | |
-| 40 | Command history in SQLite | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 41 | History with success/fail (✓/✗) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 42 | Command execution time (ms) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 43 | Session recording (asciinema) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 44 | Export history CSV/JSON | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 45 | Show history (Cmd+Shift+H) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| | **PRODUCTIVITY** | | | | | | | |
-| 46 | Broadcast input to all tabs/panes | ✅ | ❌ | ✅ | ❌ | ❌ | — | Done |
-| 47 | Smart paste protection | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 48 | Keyboard shortcuts help (Cmd+/) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 49 | Welcome message | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 50 | Long command notification (>10s) | ✅ | ❌ | ✅ | ✅ | ❌ | — | Done |
-| 51 | Clear screen (Cmd+K) | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 52 | Headless mode (CLI) | ✅ | ❌ | ❌ | ❌ | ❌ | — | Done |
-| 53 | Auto-close tab on exit | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 54 | Window title from shell | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 55 | App icon | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| 56 | DMG packaging | ✅ | ✅ | ✅ | ✅ | ✅ | — | Done |
-| | **PLANNED — NOT YET BUILT** | | | | | | | |
-| 57 | Quake-style dropdown | ⏳ | ❌ | ✅ | ❌ | ❌ | High | Partial |
-| 58 | Autocomplete from history (Cmd+E) | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 59 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 60 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium | Planned |
-| 61 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 62 | Session persistence / restore | ❌ | ✅ | ✅ | ✅ | ❌ | Medium | Planned |
-| 63 | Git status in tab title | ✅ | ❌ | ❌ | ✅ | ❌ | — | Done |
-| 64 | SSH tab status indicator | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
-| 65 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 66 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 67 | AI command assistant | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 68 | Clickable file paths | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
-| 69 | tmux integration | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 70 | Scriptable API / socket | ❌ | ✅ | ✅ | ❌ | ✅ | Low | Planned |
-| 71 | Regex output highlighting | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 72 | Terminal sharing (tmate-style) | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 73 | Clipboard history ring | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 74 | Environment variable viewer | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 75 | Sound themes | ❌ | ✅ | ✅ | ❌ | ❌ | Low | Planned |
-| 76 | Command bookmarks | ❌ | ❌ | ❌ | ✅ | ❌ | Low | Planned |
-| 77 | Quick file preview | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 78 | Timestamp mode | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 79 | Focus mode | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 80 | Auto-update checker | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
-| 81 | Password / Keychain integration | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 82 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
-| 83 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium | Planned |
-| 84 | Bell notification (visual/audio/badge) | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
-| 85 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium | Planned |
-| 86 | Drag & drop file path into terminal | ✅ | ✅ | ✅ | ✅ | ❌ | — | Done |
-| 87 | Right-click context menu | ✅ | ✅ | ✅ | ✅ | ❌ | — | Done |
-| 88 | Touch Bar support (MacBook Pro) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 89 | Marks / bookmarks in scrollback | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
-| 90 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 91 | Instant replay (rewind terminal output) | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 92 | Coprocess / pipe output to script | ❌ | ❌ | ✅ | ❌ | ❌ | Low | Planned |
-| 93 | Password prompt detection & Keychain autofill | ❌ | ❌ | ❌ | ❌ | ❌ | Medium | Planned |
-| 94 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium | Planned |
-| 95 | Configurable scrollback limit | ❌ | ✅ | ✅ | ✅ | ✅ | Low | Planned |
-| 96 | Automatic profile switching (by host/command) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium | Planned |
-| 97 | Plugin / extension system | ❌ | ❌ | ✅ (Python) | ❌ | ❌ | Low | Planned |
-| 98 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 99 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium | Planned |
-| 100 | Emoji picker in terminal | ❌ | ❌ | ❌ | ❌ | ❌ | Low | Planned |
-| 101 | Notification badge on tab | ❌ | ❌ | ✅ | ✅ | ❌ | Low | Planned |
+## ✅ Implemented Features
+
+| # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Source |
+|---|---------|:---------:|:-----------:|:------:|:----:|:-------:|--------|
+| | **CORE TERMINAL** | | | | | | |
+| 1 | VT100/Xterm emulation | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 2 | Unicode + Emoji rendering | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 3 | ANSI colors (16/256/TrueColor) | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 4 | Text attributes (bold/italic/underline/strikethrough/dim) | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 5 | Mouse events | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 6 | Terminal resize + SIGWINCH | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 7 | Text selection with mouse | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 8 | Scrollback buffer | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 9 | Alternate screen buffer (top/vim/htop) | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 10 | Clickable hyperlinks (OSC 8) | ✅ | ❌ | ✅ | ✅ | ✅ | SwiftTerm |
+| 11 | Sixel graphics | ✅ | ❌ | ✅ | ❌ | ✅ | SwiftTerm |
+| 12 | iTerm2 inline images (imgcat) | ✅ | ❌ | ✅ | ✅ | ❌ | SwiftTerm |
+| 13 | Kitty graphics protocol | ✅ | ❌ | ❌ | ❌ | ✅ | SwiftTerm |
+| 14 | CoreText rendering | ✅ | ✅ | ✅ | ❌ | ❌ | SwiftTerm |
+| 15 | Multi-language input (CJK/IME) | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 16 | URL detection + click to open | ✅ | ❌ | ✅ | ✅ | ✅ | SwiftTerm |
+| | **TABS & WINDOWS** | | | | | | |
+| 17 | Native macOS window tabs (Cmd+T) | ✅ | ✅ | ❌ | ❌ | ✅ | AppDelegate |
+| 18 | New window (Cmd+N) | ✅ | ✅ | ✅ | ✅ | ✅ | AppDelegate |
+| 19 | Close tab (Cmd+W) | ✅ | ✅ | ✅ | ✅ | ✅ | AppDelegate |
+| 20 | Rename tab (Cmd+Shift+R) | ✅ | ❌ | ✅ | ✅ | ❌ | AppDelegate |
+| 21 | Split panes vertical (Cmd+D) | ✅ | ❌ | ✅ | ✅ | ✅ | SplitPaneView |
+| 22 | Split panes horizontal (Cmd+Shift+D) | ✅ | ❌ | ✅ | ✅ | ✅ | SplitPaneView |
+| 23 | Close pane (Cmd+Option+W) | ✅ | ❌ | ✅ | ✅ | ✅ | SplitPaneView |
+| | **APPEARANCE** | | | | | | |
+| 24 | 13 color themes (Dracula/Nord/Monokai/etc) | ✅ | ✅ | ✅ | ✅ | ✅ | Themes.swift |
+| 25 | Environment themes (🔵Dev/🟡Stage/🔴Prod) | ✅ | ❌ | ❌ | ❌ | ❌ | Themes.swift |
+| 26 | Theme persistence across restarts | ✅ | ✅ | ✅ | ✅ | ✅ | UserDefaults |
+| 27 | Font zoom in/out/reset (Cmd+/−/0) | ✅ | ✅ | ✅ | ✅ | ✅ | AppDelegate |
+| 28 | Window transparency toggle (Cmd+Shift+U) | ✅ | ✅ | ✅ | ❌ | ❌ | AppDelegate |
+| 29 | Preferences window (Cmd+,) | ✅ | ✅ | ✅ | ✅ | ✅ | PreferencesWindow |
+| 30 | Font size persistence | ✅ | ✅ | ✅ | ✅ | ✅ | UserDefaults |
+| | **SEARCH & NAVIGATION** | | | | | | |
+| 31 | Native Find bar (Cmd+F) | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 32 | Find Next/Previous (Cmd+G) | ✅ | ✅ | ✅ | ✅ | ✅ | SwiftTerm |
+| 33 | Command palette (Cmd+P) | ✅ | ❌ | ❌ | ✅ | ❌ | CommandPalette |
+| 34 | History search popup (Cmd+E) | ✅ | ❌ | ❌ | ✅ | ❌ | HistorySearchPopup |
+| | **SSH MANAGEMENT** | | | | | | |
+| 35 | SSH Quick Connect dialog (Cmd+Shift+S) | ✅ | ❌ | ❌ | ❌ | ❌ | AppDelegate |
+| 36 | Saved SSH sessions in menu | ✅ | ❌ | ✅ | ❌ | ❌ | SSHManager |
+| 37 | Nested SSH folders (unlimited depth, / separator) | ✅ | ❌ | ❌ | ❌ | ❌ | SSHManager |
+| 38 | Per-connection color theme | ✅ | ❌ | ✅ | ❌ | ❌ | SSHManager |
+| 39 | SSH key file browser (file picker) | ✅ | ❌ | ❌ | ❌ | ❌ | AppDelegate |
+| 40 | Edit/delete saved connections | ✅ | ❌ | ✅ | ❌ | ❌ | AppDelegate |
+| 41 | Folder combo box (dropdown of existing folders) | ✅ | ❌ | ❌ | ❌ | ❌ | AppDelegate |
+| 42 | pcon command (interactive SSH tree picker) | ✅ | ❌ | ❌ | ❌ | ❌ | TerminalView |
+| 43 | Folder multi-connect (tabs or splits) | ✅ | ❌ | ❌ | ❌ | ❌ | TerminalView |
+| 44 | Theme revert on SSH disconnect | ✅ | ❌ | ❌ | ❌ | ❌ | TerminalView |
+| | **HISTORY & RECORDING** | | | | | | |
+| 45 | Command history in SQLite (timestamps + exit codes) | ✅ | ❌ | ❌ | ✅ | ❌ | HistoryDB |
+| 46 | History success/fail indicators (✓/✗) | ✅ | ❌ | ❌ | ✅ | ❌ | HistoryDB |
+| 47 | Command execution time (millisecond precision) | ✅ | ❌ | ❌ | ✅ | ❌ | zsh hooks |
+| 48 | Show history in terminal (Cmd+Shift+H) | ✅ | ❌ | ❌ | ✅ | ❌ | TerminalView |
+| 49 | Session recording (asciinema .cast format, Cmd+Option+R) | ✅ | ❌ | ❌ | ❌ | ❌ | SessionRecorder |
+| 50 | Export history to CSV | ✅ | ❌ | ❌ | ❌ | ❌ | AppDelegate |
+| 51 | Export history to JSON | ✅ | ❌ | ❌ | ❌ | ❌ | AppDelegate |
+| 52 | phistory command (CLI history viewer) | ✅ | ❌ | ❌ | ❌ | ❌ | TerminalView |
+| | **PRODUCTIVITY** | | | | | | |
+| 53 | Broadcast input to all tabs/panes (Cmd+Shift+B) | ✅ | ❌ | ✅ | ❌ | ❌ | BroadcastManager |
+| 54 | Smart paste protection (dangerous command warning) | ✅ | ❌ | ❌ | ✅ | ❌ | PasteProtection |
+| 55 | Paste protection toggle (View menu) | ✅ | ❌ | ❌ | ❌ | ❌ | AppDelegate |
+| 56 | Keyboard shortcuts help (Cmd+/) | ✅ | ❌ | ❌ | ✅ | ❌ | AppDelegate |
+| 57 | phelp command (CLI help) | ✅ | ❌ | ❌ | ❌ | ❌ | TerminalView |
+| 58 | Welcome message with shortcuts on startup | ✅ | ❌ | ❌ | ✅ | ❌ | TerminalView |
+| 59 | Long command notification (>10s, sound + dock bounce) | ✅ | ❌ | ✅ | ✅ | ❌ | TerminalView |
+| 60 | Clear screen (Cmd+K) | ✅ | ✅ | ✅ | ✅ | ✅ | AppDelegate |
+| 61 | Headless terminal mode (--headless / -e) | ✅ | ❌ | ❌ | ❌ | ❌ | HeadlessTerminal |
+| 62 | Git branch + dirty status in tab title | ✅ | ❌ | ❌ | ✅ | ❌ | zsh hooks |
+| 63 | Right-click context menu | ✅ | ✅ | ✅ | ✅ | ❌ | TerminalView |
+| 64 | Drag & drop file path from Finder | ✅ | ✅ | ✅ | ✅ | ❌ | TerminalView |
+| 65 | Auto-close tab on shell exit | ✅ | ✅ | ✅ | ✅ | ✅ | TerminalView |
+| 66 | Window title from shell escape sequences | ✅ | ✅ | ✅ | ✅ | ✅ | TerminalView |
+| 67 | Full menu bar (Shell/Edit/View/Window/Help) | ✅ | ✅ | ✅ | ✅ | ✅ | AppDelegate |
+| 68 | Custom app icon | ✅ | ✅ | ✅ | ✅ | ✅ | AppIcon.icns |
+| 69 | DMG packaging for distribution | ✅ | ✅ | ✅ | ✅ | ✅ | build-dmg.sh |
+
+**Total implemented: 69**
+
+## ⏳ Partially Done
+
+| # | Feature | Notes |
+|---|---------|-------|
+| 70 | Metal GPU rendering | Code exists, disabled due to cursor spacing issue |
+| 71 | Quake-style dropdown (Ctrl+`) | Code exists, needs Accessibility permissions |
+
+## 📋 Planned Features
+
+| # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Priority |
+|---|---------|:---------:|:-----------:|:------:|:----:|:-------:|----------|
+| 72 | Autocomplete suggestions as you type | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 73 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 74 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium |
+| 75 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 76 | Session persistence / restore on relaunch | ❌ | ✅ | ✅ | ✅ | ❌ | Medium |
+| 77 | SSH tab status indicator (connected/disconnected) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
+| 78 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 79 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 80 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
+| 81 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium |
+| 82 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
+| 83 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 84 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 85 | Automatic profile switching by host | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
+| 86 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 87 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 88 | Password prompt detection + Keychain | ❌ | ❌ | ❌ | ❌ | ❌ | Medium |
+| 89 | AI command assistant | ❌ | ❌ | ❌ | ✅ | ❌ | Low |
+| 90 | Clickable file paths in output | ❌ | ❌ | ✅ | ✅ | ❌ | Low |
+| 91 | tmux integration | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 92 | Scriptable API / socket control | ❌ | ✅ | ✅ | ❌ | ✅ | Low |
+| 93 | Regex-based output highlighting | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 94 | Terminal sharing (tmate-style) | ❌ | ❌ | ❌ | ✅ | ❌ | Low |
+| 95 | Clipboard history ring | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 96 | Sound themes (bell/complete/error) | ❌ | ✅ | ✅ | ❌ | ❌ | Low |
+| 97 | Instant replay (rewind output) | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 98 | Plugin / extension system | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
+| 99 | Auto-update checker | ❌ | ✅ | ✅ | ✅ | ✅ | Low |
+| 100 | Configurable scrollback limit | ❌ | ✅ | ✅ | ✅ | ✅ | Low |
+| 101 | Touch Bar support | ❌ | ❌ | ✅ | ❌ | ❌ | Low |
 
 ## Summary
 
-| Terminal | Done (of 101) | Unique Features |
-|----------|--------------|-----------------|
-| **PTerminal** | **58** (56 done + 2 partial) | SSH nested folders, per-connection themes, env themes (Dev/Stage/Prod), session recording, history export, headless mode, command palette, broadcast input bar |
-| Terminal.app | 38 | Built into macOS |
-| iTerm2 | 62 | tmux, profiles, triggers, instant replay, plugin system |
-| Warp | 52 | AI assistant, command blocks, collaboration, multi-line editing |
-| Ghostty | 42 | GPU-native, scriptable API, ligatures |
+| Terminal | Implemented | Unique to PTerminal |
+|----------|:-----------:|---------------------|
+| **PTerminal** | **69 + 2 partial** | Nested SSH folders, per-connection themes, env themes, folder multi-connect, pcon/phistory/phelp CLI tools, session recording, history export, headless mode, command palette, history search popup, paste protection toggle, theme revert on disconnect, git dirty status in title |
+| Terminal.app | ~38 | Built into macOS |
+| iTerm2 | ~62 | tmux, triggers, instant replay, Python plugins |
+| Warp | ~52 | AI assistant, command blocks, multi-line editing |
+| Ghostty | ~42 | GPU-native Zig, scriptable API |
+
+---
+
+*3,791 lines of Swift • 16 source files • MIT License*
