@@ -662,9 +662,9 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
             if parts.count == 2 {
                 lastCommand = String(parts[1])
                 commandStartTime = Date()
-                // Show activity indicator in title
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
+                // Show activity indicator after 1 second delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    guard let self = self, self.lastCommand != nil else { return }
                     let currentTitle = self.window?.title ?? "PTerminal"
                     if !currentTitle.hasPrefix("⏳") {
                         self.window?.title = "⏳ \(currentTitle)"
