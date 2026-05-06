@@ -203,6 +203,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         viewMenu.addItem(themesItem)
         viewMenu.addItem(.separator())
         viewMenu.addItem(withTitle: "Clear Screen", action: #selector(clearScreen), keyEquivalent: "k")
+        let sidebarItem = NSMenuItem(title: "Toggle Command Sidebar", action: #selector(toggleSidebar), keyEquivalent: "b")
+        sidebarItem.keyEquivalentModifierMask = [.command, .option]
+        viewMenu.addItem(sidebarItem)
         let viewMenuItem = NSMenuItem()
         viewMenuItem.submenu = viewMenu
         mainMenu.addItem(viewMenuItem)
@@ -1169,8 +1172,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func clearScreen() {
         if let view = NSApp.keyWindow?.contentView as? PTerminalView {
-            // Send Ctrl+L to the shell
             view.terminalView.send(txt: "\u{0C}")
+        }
+    }
+
+    @objc func toggleSidebar() {
+        if let split = NSApp.keyWindow?.contentView as? SplitPaneView,
+           let terminal = split.activeTerminal {
+            terminal.toggleCommandSidebar()
         }
     }
 

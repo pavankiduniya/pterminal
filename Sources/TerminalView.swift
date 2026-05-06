@@ -347,6 +347,36 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
 
     required init?(coder: NSCoder) { fatalError() }
 
+    // MARK: - Command Sidebar
+
+    private var commandSidebar: CommandSidebar?
+    private let sidebarWidth: CGFloat = 220
+
+    func toggleCommandSidebar() {
+        if let sidebar = commandSidebar {
+            // Hide
+            sidebar.removeFromSuperview()
+            commandSidebar = nil
+            // Expand terminal
+            terminalView.frame.size.width = bounds.width
+        } else {
+            // Show
+            let sidebar = CommandSidebar(frame: NSRect(
+                x: bounds.width - sidebarWidth,
+                y: 32, // above broadcast bar
+                width: sidebarWidth,
+                height: bounds.height - 32 - snippetBarHeight
+            ))
+            sidebar.autoresizingMask = [.height, .minXMargin]
+            sidebar.terminalView = terminalView
+            addSubview(sidebar)
+            commandSidebar = sidebar
+            // Shrink terminal
+            terminalView.frame.size.width = bounds.width - sidebarWidth
+            sidebar.loadCommands()
+        }
+    }
+
     // MARK: - Broadcast bar
 
     private var broadcastBar: NSView?
