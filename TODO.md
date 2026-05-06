@@ -94,7 +94,7 @@
 
 | # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Priority |
 |---|---------|:---------:|:-----------:|:------:|:----:|:-------:|----------|
-| 72 | Autocomplete suggestions as you type | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 72 | Autocomplete suggestions as you type | ✅ | ❌ | ❌ | ✅ | ❌ | — |
 | 73 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
 | 74 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium |
 | 75 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |

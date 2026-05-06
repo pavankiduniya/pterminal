@@ -12,6 +12,7 @@ let package = Package(
             name: "PTerminal",
             dependencies: ["SwiftTerm"],
             path: "Sources",
+            resources: [.copy("zsh-autosuggestions.zsh")],
             linkerSettings: [.linkedLibrary("sqlite3")]
         )
     ]
