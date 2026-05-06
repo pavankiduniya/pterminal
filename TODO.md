@@ -103,7 +103,7 @@
 | 80 | Multiple cursor styles (block/bar/underline) | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | 81 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
 | 82 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
-| 83 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 83 | Tab activity indicator (⏳ when busy) | ✅ | ❌ | ✅ | ✅ | ❌ | — |
 | 84 | Automatic profile switching by host | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
 | 85 | Multi-line command editing | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
 | 86 | Inline command help / man page preview | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |

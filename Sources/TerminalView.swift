@@ -662,6 +662,14 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
             if parts.count == 2 {
                 lastCommand = String(parts[1])
                 commandStartTime = Date()
+                // Show activity indicator in title
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    let currentTitle = self.window?.title ?? "PTerminal"
+                    if !currentTitle.hasPrefix("⏳") {
+                        self.window?.title = "⏳ \(currentTitle)"
+                    }
+                }
             }
         } else if line.hasPrefix("EXIT:") {
             let exitCode = String(line.dropFirst(5)).trimmingCharacters(in: .whitespaces)
@@ -671,6 +679,11 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
 
                 DispatchQueue.main.async {
                     HistoryDB.shared.addCommand(cmd, tabName: nil, workingDir: nil, exitCode: exitCode, success: success)
+
+                    // Remove activity indicator
+                    if let title = self.window?.title, title.hasPrefix("⏳ ") {
+                        self.window?.title = String(title.dropFirst(2))
+                    }
 
                     if elapsed >= 10 {
                         self.sendCompletionNotification(command: cmd, elapsed: elapsed, success: success, exitCode: exitCode)
