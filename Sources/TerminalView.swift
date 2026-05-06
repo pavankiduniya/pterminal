@@ -660,7 +660,9 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         if line.hasPrefix("CMD:") {
             let parts = line.dropFirst(4).split(separator: ":", maxSplits: 1)
             if parts.count == 2 {
-                lastCommand = String(parts[1])
+                let cmd = String(parts[1]).trimmingCharacters(in: .whitespaces)
+                guard !cmd.isEmpty else { return }
+                lastCommand = cmd
                 commandStartTime = Date()
                 // Show activity indicator after 1 second delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in

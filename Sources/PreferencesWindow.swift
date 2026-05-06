@@ -291,9 +291,9 @@ class PreferencesWindow: NSWindow {
         // Apply to all terminals
         let style: CursorStyle
         switch sender.indexOfSelectedItem {
-        case 1: style = .steadyUnderline
-        case 2: style = .steadyBar
-        default: style = .steadyBlock
+        case 1: style = .blinkUnderline
+        case 2: style = .blinkBar
+        default: style = .blinkBlock
         }
         for window in NSApp.windows {
             if let split = window.contentView as? SplitPaneView {
