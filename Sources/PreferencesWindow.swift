@@ -288,6 +288,20 @@ class PreferencesWindow: NSWindow {
 
     @objc private func cursorStyleChanged(_ sender: NSPopUpButton) {
         UserDefaults.standard.set(sender.indexOfSelectedItem, forKey: "cursorStyle")
+        // Apply to all terminals
+        let style: CursorStyle
+        switch sender.indexOfSelectedItem {
+        case 1: style = .steadyUnderline
+        case 2: style = .steadyBar
+        default: style = .steadyBlock
+        }
+        for window in NSApp.windows {
+            if let split = window.contentView as? SplitPaneView {
+                for terminal in split.allTerminals {
+                    terminal.terminalView.getTerminal().setCursorStyle(style)
+                }
+            }
+        }
     }
 
     @objc private func opacityChanged(_ sender: NSSlider) {

@@ -97,11 +97,10 @@
 | 72 | Snippet manager (bookmarks bar) | ✅ | ❌ | ✅ | ✅ | ❌ | — |
 | 73 | Workspace / project profiles | ✅ | ❌ | ✅ | ✅ | ❌ | — |
 | 75 | Session persistence / restore on relaunch | ❌ | ✅ | ✅ | ✅ | ❌ | Medium |
-| 76 | SSH tab status indicator (connected/disconnected) | ❌ | ❌ | ✅ | ❌ | ❌ | Medium |
-| 77 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 76 | AI agent workspace | ❌ | ❌ | ❌ | ✅ | ❌ | Medium |
 | 78 | Shell integration protocol | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
 | 79 | Ligature font support | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
-| 80 | Multiple cursor styles (block/bar/underline) | ❌ | ✅ | ✅ | ✅ | ✅ | Medium |
+| 80 | Multiple cursor styles (block/bar/underline) | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | 81 | Custom key bindings / remap | ❌ | ❌ | ✅ | ✅ | ✅ | Medium |
 | 82 | Semantic history (Cmd+click file → editor) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
 | 83 | Tab activity indicator (spinner when busy) | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
@@ -143,4 +142,5 @@
 |---------|--------|-----------|
 | Inline autocomplete / intellisense as you type | Requires Warp-style custom input editor (breaks real PTY). We use Cmd+E history search instead. | Warp only |
 | Command blocks / output grouping | Requires custom rendering engine, not compatible with standard terminal emulation | Warp only |
+| SSH tab status indicator (color) | Native macOS tabs don't support per-tab colors. Theme-based indicator works instead. | — |
 | Multi-line command editing | Requires custom input editor separate from PTY | Warp only |
