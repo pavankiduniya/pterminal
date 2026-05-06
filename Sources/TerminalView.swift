@@ -193,11 +193,6 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
             fi
         }
         add-zsh-hook precmd __pterminal_git_precmd 2>/dev/null
-
-        # Autosuggestions (Fish-style ghost text from history)
-        [ -f "\(zshDir)/zsh-autosuggestions.zsh" ] && source "\(zshDir)/zsh-autosuggestions.zsh"
-        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
-        ZSH_AUTOSUGGEST_STRATEGY=(history completion)
         """
         try? zshrc.write(toFile: zshDir + "/.zshrc", atomically: true, encoding: .utf8)
 
@@ -210,12 +205,6 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         writePconScript(to: binDir + "/pcon", dbPath: dbPath)
         writePhistoryScript(to: binDir + "/phistory", dbPath: dbPath)
         writePhelpScript(to: binDir + "/phelp")
-
-        // Bundle zsh-autosuggestions plugin
-        if let pluginURL = Bundle.module.url(forResource: "zsh-autosuggestions", withExtension: "zsh"),
-           let content = try? String(contentsOf: pluginURL, encoding: .utf8) {
-            try? content.write(toFile: zshDir + "/zsh-autosuggestions.zsh", atomically: true, encoding: .utf8)
-        }
 
         // pcon — interactive SSH session picker with tree view
         let zlogin = "[ -f \"\(home)/.zlogin\" ] && source \"\(home)/.zlogin\"\n"
