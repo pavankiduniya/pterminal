@@ -212,8 +212,8 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         writePhelpScript(to: binDir + "/phelp")
 
         // Bundle zsh-autosuggestions plugin
-        let pluginContent = try? String(contentsOfFile: Bundle.main.path(forResource: "zsh-autosuggestions", ofType: "zsh") ?? "", encoding: .utf8)
-        if let content = pluginContent {
+        if let pluginURL = Bundle.module.url(forResource: "zsh-autosuggestions", withExtension: "zsh"),
+           let content = try? String(contentsOf: pluginURL, encoding: .utf8) {
             try? content.write(toFile: zshDir + "/zsh-autosuggestions.zsh", atomically: true, encoding: .utf8)
         }
 
