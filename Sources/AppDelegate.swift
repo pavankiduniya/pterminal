@@ -15,6 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         setupMenuBar()
         refreshSavedSessionsMenu()
+        refreshWorkspacesMenu()
         createNewWindow()
         // Quake mode disabled — needs Accessibility permissions for global hotkey
         // QuakeMode.shared.registerHotkey()
@@ -127,6 +128,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         savedSessionsItem.submenu = savedSessionsMenu
         savedSessionsItem.tag = 200
         shellMenu.addItem(savedSessionsItem)
+        // Workspaces submenu
+        let workspacesMenu = NSMenu(title: "Workspaces")
+        let workspacesItem = NSMenuItem(title: "Workspaces", action: nil, keyEquivalent: "")
+        workspacesItem.submenu = workspacesMenu
+        workspacesItem.tag = 300
+        shellMenu.addItem(workspacesItem)
         let shellMenuItem = NSMenuItem()
         shellMenuItem.submenu = shellMenu
         self.shellMenu = shellMenu
@@ -825,6 +832,133 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return newMenu
         } else {
             return getOrCreateNestedMenu(in: newMenu, path: Array(path.dropFirst()))
+        }
+    }
+
+    // MARK: - Workspaces
+
+    func refreshWorkspacesMenu() {
+        guard let item = shellMenu.item(withTag: 300), let submenu = item.submenu else { return }
+        submenu.removeAllItems()
+
+        let workspaces = WorkspaceManager.shared.getAllWorkspaces()
+        if workspaces.isEmpty {
+            let empty = NSMenuItem(title: "No workspaces saved", action: nil, keyEquivalent: "")
+            empty.isEnabled = false
+            submenu.addItem(empty)
+        } else {
+            for ws in workspaces {
+                let title = "🗂 \(ws.name) (\(ws.tabs.count) tabs)"
+                let item = NSMenuItem(title: title, action: #selector(openWorkspace(_:)), keyEquivalent: "")
+                item.tag = ws.id
+                submenu.addItem(item)
+            }
+        }
+        submenu.addItem(.separator())
+        submenu.addItem(withTitle: "Save Current as Workspace...", action: #selector(saveWorkspace), keyEquivalent: "")
+        submenu.addItem(withTitle: "Manage Workspaces...", action: #selector(manageWorkspaces), keyEquivalent: "")
+    }
+
+    @objc func saveWorkspace() {
+        let alert = NSAlert()
+        alert.messageText = "Save Workspace"
+        alert.informativeText = "Save the current tab layout as a workspace profile."
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 300, height: 60))
+        let nameLabel = NSTextField(labelWithString: "Name:")
+        nameLabel.frame = NSRect(x: 0, y: 32, width: 50, height: 20)
+        container.addSubview(nameLabel)
+        let nameField = NSTextField(frame: NSRect(x: 55, y: 30, width: 240, height: 24))
+        nameField.placeholderString = "e.g. Project Alpha"
+        container.addSubview(nameField)
+
+        let hint = NSTextField(labelWithString: "Tabs will be saved with their current directories.")
+        hint.frame = NSRect(x: 0, y: 5, width: 300, height: 16)
+        hint.font = NSFont.systemFont(ofSize: 10)
+        hint.textColor = .secondaryLabelColor
+        container.addSubview(hint)
+
+        alert.accessoryView = container
+        alert.window.initialFirstResponder = nameField
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let name = nameField.stringValue.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+
+        let wsId = WorkspaceManager.shared.createWorkspace(name: name)
+        guard wsId > 0 else { return }
+
+        // Save current window's tabs — for now save one "local" tab per window
+        // In future could detect SSH sessions
+        WorkspaceManager.shared.addTab(workspaceId: wsId, type: .local, directory: "~")
+
+        refreshWorkspacesMenu()
+
+        if let terminal = activeTerminal() {
+            let nl = "\r\n"
+            terminal.terminalView.feed(text: "\u{1B}[32m✓ Workspace '\(name)' saved\u{1B}[0m" + nl)
+        }
+    }
+
+    @objc func openWorkspace(_ sender: NSMenuItem) {
+        let workspaces = WorkspaceManager.shared.getAllWorkspaces()
+        guard let ws = workspaces.first(where: { $0.id == sender.tag }) else { return }
+
+        // Open each tab
+        for (i, tab) in ws.tabs.enumerated() {
+            if i > 0 {
+                createNewWindow(tabIn: NSApp.keyWindow)
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.8) {
+                guard let split = NSApp.keyWindow?.contentView as? SplitPaneView,
+                      let terminal = split.activeTerminal else { return }
+
+                switch tab.type {
+                case .local:
+                    if let dir = tab.directory, !dir.isEmpty {
+                        terminal.terminalView.send(txt: "cd \(dir)\n")
+                    }
+                    if let cmd = tab.command, !cmd.isEmpty {
+                        terminal.terminalView.send(txt: cmd + "\n")
+                    }
+                case .ssh:
+                    if let sshId = tab.sshConnectionId,
+                       let conn = SSHManager.shared.getAll().first(where: { $0.id == sshId }) {
+                        terminal.terminalView.send(txt: conn.sshCommand + "\n")
+                        if conn.themeIndex < Themes.all.count {
+                            Themes.all[conn.themeIndex].apply(to: terminal.terminalView)
+                        }
+                    }
+                case .command:
+                    if let cmd = tab.command, !cmd.isEmpty {
+                        terminal.terminalView.send(txt: cmd + "\n")
+                    }
+                }
+            }
+        }
+    }
+
+    @objc func manageWorkspaces() {
+        let workspaces = WorkspaceManager.shared.getAllWorkspaces()
+        guard !workspaces.isEmpty else { return }
+
+        let alert = NSAlert()
+        alert.messageText = "Manage Workspaces"
+        alert.addButton(withTitle: "Delete")
+        alert.addButton(withTitle: "Cancel")
+
+        let popup = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 300, height: 26))
+        for ws in workspaces {
+            popup.addItem(withTitle: "\(ws.name) (\(ws.tabs.count) tabs)")
+        }
+        alert.accessoryView = popup
+
+        if alert.runModal() == .alertFirstButtonReturn && popup.indexOfSelectedItem < workspaces.count {
+            WorkspaceManager.shared.deleteWorkspace(id: workspaces[popup.indexOfSelectedItem].id)
+            refreshWorkspacesMenu()
         }
     }
 
