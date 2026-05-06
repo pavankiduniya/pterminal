@@ -94,7 +94,14 @@
 
 | # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Priority |
 |---|---------|:---------:|:-----------:|:------:|:----:|:-------:|----------|
-| 72 | Autocomplete suggestions as you type | ⏳ | ❌ | ❌ | ✅ | ❌ | Medium |
+| 72 | ~~Inline autocomplete as you type~~ | ❌ | ❌ | ❌ | ✅ | ❌ | — |
+
+## ❌ Won't Implement (Architecture Limitation)
+
+| Feature | Reason | Who has it |
+|---------|--------|-----------|
+| Inline autocomplete / intellisense as you type | Requires Warp-style custom input editor (breaks real PTY). We use Cmd+E history search instead. | Warp only |
+| Command blocks / output grouping | Requires custom rendering engine, not compatible with standard terminal emulation | Warp only |
 | 73 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
 | 74 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium |
 | 75 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
