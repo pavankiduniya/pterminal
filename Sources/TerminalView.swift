@@ -350,7 +350,7 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
     // MARK: - Command Sidebar
 
     private var commandSidebar: CommandSidebar?
-    private let sidebarWidth: CGFloat = 220
+    private let sidebarWidth: CGFloat = 250
 
     func toggleCommandSidebar() {
         if let sidebar = commandSidebar {
