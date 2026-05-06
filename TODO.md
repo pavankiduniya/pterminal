@@ -94,7 +94,7 @@
 
 | # | Feature | PTerminal | Terminal.app | iTerm2 | Warp | Ghostty | Priority |
 |---|---------|:---------:|:-----------:|:------:|:----:|:-------:|----------|
-| 72 | Snippet manager | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
+| 72 | Snippet manager (bookmarks bar) | ✅ | ❌ | ✅ | ✅ | ❌ | — |
 | 73 | Startup profiles / auto-commands | ❌ | ✅ | ✅ | ❌ | ❌ | Medium |
 | 74 | Workspace / project profiles | ❌ | ❌ | ✅ | ✅ | ❌ | Medium |
 | 75 | Session persistence / restore on relaunch | ❌ | ✅ | ✅ | ✅ | ❌ | Medium |

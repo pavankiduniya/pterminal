@@ -235,8 +235,114 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         msg += nl
         terminalView.feed(text: msg)
 
+        // Snippet bar at top
+        setupSnippetBar()
+
         // Universal broadcast bar at bottom
         setupBroadcastBar()
+    }
+
+    // MARK: - Snippet Bar
+
+    private var snippetBar: NSScrollView?
+    private let snippetBarHeight: CGFloat = 28
+
+    private func setupSnippetBar() {
+        let scrollView = NSScrollView(frame: NSRect(x: 0, y: bounds.height - snippetBarHeight, width: bounds.width, height: snippetBarHeight))
+        scrollView.autoresizingMask = [.width, .minYMargin]
+        scrollView.hasHorizontalScroller = false
+        scrollView.hasVerticalScroller = false
+        scrollView.drawsBackground = true
+        scrollView.backgroundColor = NSColor(white: 0.12, alpha: 1)
+
+        let contentView = NSView(frame: NSRect(x: 0, y: 0, width: bounds.width, height: snippetBarHeight))
+        scrollView.documentView = contentView
+
+        addSubview(scrollView)
+        snippetBar = scrollView
+        refreshSnippetBar()
+    }
+
+    func refreshSnippetBar() {
+        guard let scrollView = snippetBar, let contentView = scrollView.documentView else { return }
+
+        // Remove old buttons
+        contentView.subviews.forEach { $0.removeFromSuperview() }
+
+        let snippets = SnippetManager.shared.getAll()
+        var x: CGFloat = 4
+
+        for snippet in snippets {
+            let btn = NSButton(frame: NSRect(x: x, y: 2, width: 0, height: 22))
+            btn.title = snippet.name
+            btn.bezelStyle = .inline
+            btn.font = NSFont.systemFont(ofSize: 11)
+            btn.contentTintColor = .cyan
+            btn.tag = snippet.id
+            btn.target = self
+            btn.action = #selector(snippetClicked(_:))
+            btn.sizeToFit()
+            btn.frame.size.width += 12
+            btn.frame.size.height = 22
+            contentView.addSubview(btn)
+            x += btn.frame.width + 4
+        }
+
+        // Add "+" button
+        let addBtn = NSButton(frame: NSRect(x: x, y: 2, width: 24, height: 22))
+        addBtn.title = "+"
+        addBtn.bezelStyle = .inline
+        addBtn.font = NSFont.systemFont(ofSize: 14, weight: .medium)
+        addBtn.contentTintColor = .gray
+        addBtn.target = self
+        addBtn.action = #selector(addSnippetClicked)
+        contentView.addSubview(addBtn)
+        x += 28
+
+        // Update content width for scrolling
+        contentView.frame.size.width = max(x, scrollView.frame.width)
+    }
+
+    @objc private func snippetClicked(_ sender: NSButton) {
+        let snippets = SnippetManager.shared.getAll()
+        guard let snippet = snippets.first(where: { $0.id == sender.tag }) else { return }
+        terminalView.send(txt: snippet.command)
+        focus()
+    }
+
+    @objc private func addSnippetClicked() {
+        let alert = NSAlert()
+        alert.messageText = "Add Snippet"
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 350, height: 70))
+
+        let nameLabel = NSTextField(labelWithString: "Name:")
+        nameLabel.frame = NSRect(x: 0, y: 42, width: 60, height: 20)
+        container.addSubview(nameLabel)
+        let nameField = NSTextField(frame: NSRect(x: 65, y: 40, width: 280, height: 24))
+        nameField.placeholderString = "e.g. deploy prod"
+        container.addSubview(nameField)
+
+        let cmdLabel = NSTextField(labelWithString: "Command:")
+        cmdLabel.frame = NSRect(x: 0, y: 8, width: 60, height: 20)
+        container.addSubview(cmdLabel)
+        let cmdField = NSTextField(frame: NSRect(x: 65, y: 6, width: 280, height: 24))
+        cmdField.placeholderString = "e.g. docker compose up -d"
+        container.addSubview(cmdField)
+
+        alert.accessoryView = container
+        alert.window.initialFirstResponder = nameField
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+
+        let name = nameField.stringValue.trimmingCharacters(in: .whitespaces)
+        let cmd = cmdField.stringValue.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty, !cmd.isEmpty else { return }
+
+        SnippetManager.shared.add(name: name, command: cmd)
+        refreshSnippetBar()
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -295,8 +401,9 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
         addSubview(bar)
         broadcastBar = bar
 
-        // Terminal sits above the bar
-        terminalView.frame = NSRect(x: 0, y: barHeight, width: bounds.width, height: bounds.height - barHeight)
+        // Terminal sits between snippet bar (top) and broadcast bar (bottom)
+        let topOffset = snippetBarHeight
+        terminalView.frame = NSRect(x: 0, y: barHeight, width: bounds.width, height: bounds.height - barHeight - topOffset)
         terminalView.autoresizingMask = [.width, .height]
     }
 
