@@ -101,6 +101,9 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
         scrollView.autohidesScrollers = true
         scrollView.autoresizingMask = [.width, .height]
         addSubview(scrollView)
+
+        // Load shortcuts immediately
+        tableView.reloadData()
     }
 
     func loadCommands() {

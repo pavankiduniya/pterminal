@@ -373,7 +373,6 @@ class PTerminalView: NSView, LocalProcessTerminalViewDelegate {
             commandSidebar = sidebar
             // Shrink terminal
             terminalView.frame.size.width = bounds.width - sidebarWidth
-            sidebar.loadCommands()
         }
     }
 
