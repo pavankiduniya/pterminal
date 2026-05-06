@@ -164,11 +164,11 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let item = filtered[row]
-        let cellWidth = tableView.bounds.width
-        let cell = NSView(frame: NSRect(x: 0, y: 0, width: cellWidth, height: 22))
+        let cell = NSTableCellView()
+        cell.frame = NSRect(x: 0, y: 0, width: 230, height: 22)
 
         if item.name.isEmpty {
-            let sep = NSView(frame: NSRect(x: 8, y: 10, width: cellWidth - 16, height: 1))
+            let sep = NSView(frame: NSRect(x: 8, y: 10, width: 210, height: 1))
             sep.wantsLayer = true
             sep.layer?.backgroundColor = NSColor(white: 0.2, alpha: 1).cgColor
             cell.addSubview(sep)
@@ -176,18 +176,22 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
         }
 
         let label = NSTextField(labelWithString: item.name)
-        label.frame = NSRect(x: 6, y: 1, width: cellWidth - 80, height: 18)
+        label.frame = NSRect(x: 6, y: 1, width: 140, height: 18)
         label.font = NSFont.systemFont(ofSize: 11)
         label.textColor = .white
         label.lineBreakMode = .byTruncatingTail
+        label.isBordered = false
+        label.drawsBackground = false
         cell.addSubview(label)
 
         if !item.key.isEmpty {
             let keyLabel = NSTextField(labelWithString: item.key)
-            keyLabel.frame = NSRect(x: cellWidth - 72, y: 1, width: 66, height: 18)
+            keyLabel.frame = NSRect(x: 148, y: 1, width: 75, height: 18)
             keyLabel.font = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
             keyLabel.textColor = NSColor(red: 0.4, green: 0.8, blue: 1.0, alpha: 1)
             keyLabel.alignment = .right
+            keyLabel.isBordered = false
+            keyLabel.drawsBackground = false
             cell.addSubview(keyLabel)
         }
 
