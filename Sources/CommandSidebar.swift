@@ -22,6 +22,14 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
 
     required init?(coder: NSCoder) { fatalError() }
 
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview()
+        // Reload when actually added to view hierarchy
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
+        }
+    }
+
     private func buildShortcuts() {
         shortcuts = [
             ("New Tab", "⌘T"),
@@ -84,7 +92,9 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
 
         // Table
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("cmd"))
-        column.width = bounds.width - 16
+        column.width = 230
+        column.minWidth = 100
+        column.maxWidth = 500
         tableView.addTableColumn(column)
         tableView.headerView = nil
         tableView.backgroundColor = .clear
@@ -93,6 +103,7 @@ class CommandSidebar: NSView, NSTextFieldDelegate, NSTableViewDataSource, NSTabl
         tableView.dataSource = self
         tableView.target = self
         tableView.doubleAction = #selector(rowDoubleClicked)
+        tableView.columnAutoresizingStyle = .lastColumnOnlyAutoresizingStyle
 
         let scrollView = NSScrollView(frame: NSRect(x: 4, y: 4, width: bounds.width - 8, height: bounds.height - 64))
         scrollView.documentView = tableView
